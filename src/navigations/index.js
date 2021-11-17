@@ -7,8 +7,8 @@ const Navigation = () => {
     return (
         <>
         <NavigationContainer>
-            {/* <MainTab/> */}
-            <AuthStack />
+            <MainTab/>
+            {/* <AuthStack /> */}
         </NavigationContainer>
         </>
     );

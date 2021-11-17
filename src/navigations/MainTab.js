@@ -3,10 +3,14 @@ import { Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeMap, Diary, Calendar, Mypage } from '../screens'
 import { theme } from '../theme';
+import {getHeight, getWidth, getFontSize} from "../hooks/caculateSize"
 
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
+    const IconHeight = getHeight(44);
+    const IconWidth = getWidth(44);
+    const LabelSize = Math.round(getFontSize(20));
     
     return(
             <Tab.Navigator
@@ -15,7 +19,12 @@ const MainTab = () => {
                     keyboardHidesTabBar: true,
                     tabBarActiveTintColor: theme.bottomtabtint,
                     headerShown: false,
-                    tabBarStyle:{height:60,}
+                    tabBarStyle:{height: getHeight(90),},
+                    tabBarLabelStyle: ({focused}) => {
+                        return <Text style={{
+                            color: focused? theme.focusedIconLabel : theme.blackText, 
+                            }} />
+                    }
                 }}
                 
             >
@@ -23,12 +32,14 @@ const MainTab = () => {
                     name="지도" 
                     component={HomeMap}
                     options={{
+                        tabBarLabelStyle: {fontSize: LabelSize, fontFamily: "나눔손글씨 중학생", 
+                        position: "relative", bottom: getHeight(10)},
                         tabBarIcon:({focused}) =>{
                             return(
                                 <Image
                                     source ={focused? require("../assets/icons/tab/homemap_active.png"):
                                     require("../assets/icons/tab/homemap.png")} 
-                                    style={{width:45, height:45}}/> 
+                                    style={{width: IconWidth, height: IconHeight}}/> 
                             )}
                     }}
                 />
@@ -36,12 +47,14 @@ const MainTab = () => {
                     name="일기" 
                     component={Diary}
                     options={{
+                        tabBarLabelStyle: {fontSize: LabelSize, fontFamily: "나눔손글씨 중학생", 
+                        position: "relative", bottom: getHeight(10)},
                         tabBarIcon:({focused}) =>{
                             return(
                                 <Image
                                     source ={focused? require("../assets/icons/tab/diary_active.png"):
                                     require("../assets/icons/tab/diary.png")}  
-                                    style={{width:40, height:40}}/>
+                                    style={{width: IconWidth, height: IconHeight}}/> 
                             )}
                     }}
                 />
@@ -49,12 +62,14 @@ const MainTab = () => {
                     name="달력" 
                     component={Calendar}
                     options={{
+                        tabBarLabelStyle: {fontSize: LabelSize, fontFamily: "나눔손글씨 중학생", 
+                        position: "relative", bottom: getHeight(10)},
                         tabBarIcon:({focused}) =>{
                             return(
                                 <Image
                                     source ={focused? require("../assets/icons/tab/calendar_active.png"):
                                     require("../assets/icons/tab/calendar.png")}  
-                                    style={{width:38, height:38}}/>
+                                    style={{width: IconWidth, height: IconHeight}}/> 
                             )}
                     }}
                 />
@@ -62,12 +77,14 @@ const MainTab = () => {
                     name="마이페이지" 
                     component={Mypage}
                     options={{
+                        tabBarLabelStyle: {fontSize: LabelSize, fontFamily: "나눔손글씨 중학생", 
+                        position: "relative", bottom: getHeight(10)},
                         tabBarIcon:({focused}) =>{
                             return(
                                 <Image
                                     source ={focused? require("../assets/icons/tab/mypage_active.png"):
                                     require("../assets/icons/tab/mypage.png")}  
-                                    style={{width:40, height:40}}/>
+                                    style={{width: IconWidth, height: IconHeight}}/> 
                             )}
                     }}
                 />
