@@ -26,8 +26,9 @@ const MainTab = () => {
                         tabBarIcon:({focused}) =>{
                             return(
                                 <Image
-                                    source ={focused? require("../assets/icons/homemap_active.png"):
-                                    require("../assets/icons/homemap.png")} /> 
+                                    source ={focused? require("../assets/icons/tab/homemap_active.png"):
+                                    require("../assets/icons/tab/homemap.png")} 
+                                    style={{width:45, height:45}}/> 
                             )}
                     }}
                 />
@@ -38,8 +39,9 @@ const MainTab = () => {
                         tabBarIcon:({focused}) =>{
                             return(
                                 <Image
-                                    source ={focused? require("../assets/icons/diary_active.png"):
-                                    require("../assets/icons/diary.png")}  />
+                                    source ={focused? require("../assets/icons/tab/diary_active.png"):
+                                    require("../assets/icons/tab/diary.png")}  
+                                    style={{width:40, height:40}}/>
                             )}
                     }}
                 />
@@ -50,8 +52,9 @@ const MainTab = () => {
                         tabBarIcon:({focused}) =>{
                             return(
                                 <Image
-                                    source ={focused? require("../assets/icons/calendar_active.png"):
-                                    require("../assets/icons/calendar.png")}  />
+                                    source ={focused? require("../assets/icons/tab/calendar_active.png"):
+                                    require("../assets/icons/tab/calendar.png")}  
+                                    style={{width:38, height:38}}/>
                             )}
                     }}
                 />
@@ -62,8 +65,9 @@ const MainTab = () => {
                         tabBarIcon:({focused}) =>{
                             return(
                                 <Image
-                                    source ={focused? require("../assets/icons/mypage_active.png"):
-                                    require("../assets/icons/mypage.png")}  />
+                                    source ={focused? require("../assets/icons/tab/mypage_active.png"):
+                                    require("../assets/icons/tab/mypage.png")}  
+                                    style={{width:40, height:40}}/>
                             )}
                     }}
                 />
