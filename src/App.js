@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, StatusBar } from 'react-native';
 import { theme } from './theme';
 import Navigation from './navigations';
 import {ProgressProvider} from "./contexts";
@@ -15,6 +15,7 @@ const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <ProgressProvider>
+                <StatusBar hidden={true}/>
                 <Navigation />
             </ProgressProvider>
         </ThemeProvider>
