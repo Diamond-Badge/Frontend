@@ -18,6 +18,9 @@ import locationIcon from "./assets/images/mypage/locationIcon.png";
 import first from "./assets/images/mypage/first.png";
 import second from "./assets/images/mypage/second.png";
 import third from "./assets/images/mypage/third.png";
+import upMark from "./assets/images/mypage/upMark.png";
+import downMark from "./assets/images/mypage/downMark.png";
+
 
 export const images = {
     redCharacter,
@@ -40,4 +43,6 @@ export const images = {
     first,
     second,
     third,
+    upMark,
+    downMark,
 };

@@ -121,23 +121,25 @@ const Mypage = () => {
             <View style={{width: getWidth(360), height: getHeight(781)}}>
               <InfoText top={250} left={40} size={30}>감정 통계 서비스</InfoText>
               <InfoText top={300} left={40} size={20}>월별 감정 비율</InfoText>
-              <EmotionIcon source={images.excited} top={342} left={40}/>
+              <EmotionIcon source={images.excited} top={342} left={40} resizeMode="contain"/>
               <View style={{position: "absolute", width: getWidth(42.5), top: getHeight(386), left: getWidth(40), alignItems: "center"}}><EmotionRateText>{excitedRate}%</EmotionRateText></View>
-              <EmotionIcon source={images.happy} top={342} left={95.8}/>
+              <EmotionIcon source={images.happy} top={342} left={95.8} resizeMode="contain"/>
               <View style={{position: "absolute", width: getWidth(42.5), top: getHeight(386), left: getWidth(95.8), alignItems: "center"}}><EmotionRateText>{happyRate}%</EmotionRateText></View>
-              <EmotionIcon source={images.sad} top={342} left={157}/>
+              <EmotionIcon source={images.sad} top={342} left={157} resizeMode="contain"/>
               <View style={{position: "absolute", width: getWidth(42.5), top: getHeight(386), left: getWidth(157), alignItems: "center"}}><EmotionRateText>{sadRate}%</EmotionRateText></View>
-              <EmotionIcon source={images.angry} top={342} left={216.7}/>
+              <EmotionIcon source={images.angry} top={342} left={216.7} resizeMode="contain"/>
               <View style={{position: "absolute", width: getWidth(42.5), top: getHeight(386), left: getWidth(216.7), alignItems: "center"}}><EmotionRateText>{angryRate}%</EmotionRateText></View>
-              <EmotionIcon source={images.depressed} top={342} left={276.7}/>
+              <EmotionIcon source={images.depressed} top={342} left={276.7} resizeMode="contain"/>
               <View style={{position: "absolute", width: getWidth(42.5), top: getHeight(386), left: getWidth(276.7), alignItems: "center"}}><EmotionRateText>{depressedRate}%</EmotionRateText></View>
               
               <InfoText top={440} left={40} size={20}>활발 지수</InfoText>
               <InfoText top={465} left={51.5} size={20}>{activityMent()}</InfoText>
               <Image source={images.diaryIcon} style={{position: "absolute", top: getHeight(502), left: getWidth(73), height: getHeight(37), width: getWidth(37)}} resizeMode="contain"/>
               <InfoText top={512} left={120} size={20}>{diaryCount}개</InfoText>
+              <Image source={(diaryPrevCount < diaryCount)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(140), height: getHeight(23.9), width: getWidth(20)}}/>
               <Image source={images.locationIcon} style={{position: "absolute", top: getHeight(502), left: getWidth(204), height: getHeight(38.1), width: getWidth(36)}} resizeMode="contain"/>
               <InfoText top={512} left={250} size={20}>{locCount}개</InfoText>
+              <Image source={(locPrevCount < locCount)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(274), height: getHeight(23.9), width: getWidth(20)}}/>
 
               <InfoText top={580} left={40} size={20}>위치 통계</InfoText>
               <View style={{position: "absolute", top: getHeight(618), left: getWidth(60), justifyContent: 'center', alignItems: 'center'}}>
