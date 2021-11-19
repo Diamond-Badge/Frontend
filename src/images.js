@@ -20,6 +20,8 @@ import second from "./assets/images/mypage/second.png";
 import third from "./assets/images/mypage/third.png";
 import upMark from "./assets/images/mypage/upMark.png";
 import downMark from "./assets/images/mypage/downMark.png";
+import mapMarker from "./assets/images/main/mapMarker.png";
+import currentMarker from "./assets/images/main/currentMarker.png";
 
 
 export const images = {
@@ -45,4 +47,6 @@ export const images = {
     third,
     upMark,
     downMark,
+    mapMarker, 
+    currentMarker,
 };
