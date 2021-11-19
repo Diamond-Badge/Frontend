@@ -8,6 +8,8 @@ export const color={
     lightGrey: "#f2f2f2",
     lightPink: "#eec5c2",
     salmon: "#ee7d73",
+    lightYellow: "#ede7dc",
+    darkPink: "#e48981",
 };
 
 export const theme = {
@@ -16,4 +18,9 @@ export const theme = {
     blackText: color.black,
     pinkTheme: color.lightPink,
     focusedIconLabel : color.salmon,
+    diaryBackdround: color.lightYellow,
+    darkPinkIcon: color.darkPink,
+    toggleTrue: color.salmon,
+    toggleFalse: color.grey,
+    toggleThumb: color.white,
 };
