@@ -11,6 +11,8 @@ export const color={
     lightYellow: "#ede7dc",
     darkPink: "#e48981",
     characterYellow: "#ffe097",
+    orageRed: "#f43838",
+    edgePink: "#f6c3c1",
 };
 
 export const theme = {
@@ -25,4 +27,6 @@ export const theme = {
     toggleFalse: color.grey,
     toggleThumb: color.white,
     characterYellow: color.characterYellow,
+    DiaryImageBlack: color.orageRed,
+    edgePink: color.edgePink,
 };
