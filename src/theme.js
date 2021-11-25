@@ -10,6 +10,7 @@ export const color={
     salmon: "#ee7d73",
     lightYellow: "#ede7dc",
     darkPink: "#e48981",
+    characterYellow: "#ffe097",
 };
 
 export const theme = {
@@ -23,4 +24,5 @@ export const theme = {
     toggleTrue: color.salmon,
     toggleFalse: color.grey,
     toggleThumb: color.white,
+    characterYellow: color.characterYellow,
 };
