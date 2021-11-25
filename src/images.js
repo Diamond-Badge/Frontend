@@ -22,7 +22,13 @@ import upMark from "./assets/images/mypage/upMark.png";
 import downMark from "./assets/images/mypage/downMark.png";
 import mapMarker from "./assets/images/main/mapMarker.png";
 import currentMarker from "./assets/images/main/currentMarker.png";
-
+import back from "./assets/images/main/back.png";
+import otherProfile from "./assets/images/main/otherProfile.png";
+import okButton from "./assets/images/main/okButton.png";
+import cancelButton from "./assets/images/main/cancelButton.png";
+import heart from "./assets/images/main/heart.png";
+import otherDiary from "./assets/images/main/otherDiary.png";
+import option from "./assets/images/main/option.png";
 
 export const images = {
     redCharacter,
@@ -49,4 +55,11 @@ export const images = {
     downMark,
     mapMarker, 
     currentMarker,
+    back,
+    otherProfile,
+    okButton,
+    cancelButton,
+    heart,
+    otherDiary,
+    option,
 };
