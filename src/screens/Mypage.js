@@ -2,6 +2,7 @@ import React, {useContext, useState} from 'react';
 import {Image, Dimensions, View, ImageBackground, ScrollView, Switch} from 'react-native';
 import styled, {ThemeContext} from "styled-components/native";
 import {images} from "../images";
+import {EmotionRatio, LocationRank} from "../components";
 
 const HEIGHT = Dimensions.get('screen').height;
 const WIDTH = Dimensions.get('screen').width;
@@ -33,13 +34,6 @@ const InfoText = styled.Text`
   color: ${({theme}) => theme.blackText};
 `;
 
-const EmotionIcon = styled.Image`
-  position: absolute;
-  top: ${({top}) => getHeight(top)}px;
-  left: ${({left}) => getWidth(left)}px;
-  height: ${getHeight(43.3)}px;
-  width: ${getWidth(42.5)}px;
-`;
 
 const AccountText = styled.Text`
 font-family: '나눔손글씨 중학생';
@@ -50,14 +44,6 @@ text-align: left;
 color: ${({theme}) => theme.blackText};
 `;
 
-const EmotionRateText = styled.Text`
-font-family: '나눔손글씨 중학생';
-font-size: ${getFontSize(20)}px;
-font-style: normal;
-letter-spacing: 0;
-text-align: left;
-color: ${({theme}) => theme.blackText};
-`;
 
 
 
@@ -90,28 +76,6 @@ const Mypage = () => {
       return name+"님은 저번 달과 비슷하게 활발하셨군요!";
     }
   }
-
-  const EmotionRatio = ({iconImage, iconLeft, textLeft, ratioText}) => {
-    return (
-      <>
-        <EmotionIcon source={iconImage} top={342} left={iconLeft} resizeMode="contain"/>
-        <View style={{position: "absolute", width: getWidth(42.5), top: getHeight(386), left: getWidth(textLeft), alignItems: "center"}}><EmotionRateText>{ratioText}%</EmotionRateText></View>
-      </>
-    );
-  };
-
-  const LocationRank = ({iconTop, iconImage, iconText, locationText, locationTop}) => {
-    return (
-      <>
-        <View style={{position: "absolute", top: getHeight(iconTop), left: getWidth(60), justifyContent: 'center', alignItems: 'center'}}>
-          <Image source={iconImage} style={{position: "relative",width: getWidth(30), height: getHeight(30)}} resizeMode="contain"/>
-          <AccountText size={25} style={{position: "absolute"}}>{iconText}</AccountText>
-        </View>
-        <AccountText size={20} style={{position: "absolute", top: getHeight(locationTop), left: getWidth(100)}}>{locationText}</AccountText>
-      </>
-    );
-  };
-
     return (
         <ImageBackground source={images.background} style={{width: "100%", height: "100%"}} resizeMode="cover">
           <ScrollView>
