@@ -1,10 +1,18 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, View, StatusBar, Button, Dimensions, Image, TouchableOpacity} from 'react-native';
 import styled from "styled-components/native";
 import {images} from "../../images";
 import {getFontSize, getWidth, getHeight} from "../.././hooks/caculateSize";
+import {login} from "@react-native-seoul/kakao-login";
+import {NaverLogin, getProfile} from "@react-native-seoul/naver-login";
 
 const loginFont = getFontSize(50);
+
+const androidKeys = {
+  kConsumerKey: "TMhSMPDrwSW4RIt1KM0a",
+  kConsumerSecret: "SG42oKEsrX",
+  kServiceAppName: "테스트앱(안드로이드)"
+};
 
 const LoginText = styled.Text`
   font-family: '나눔손글씨 중학생';
@@ -54,9 +62,41 @@ const LoginButton = styled.Image`
 
 const Login = ({navigation}) => {
 
+
+
   const _onPress = () => {
     navigation.navigate("NickName")
   }
+
+  const signWithKakao = async () => {
+    var result = await login();
+    var token = result.accessToken;
+    // if(result) {
+    //   var prof = await getProfile();
+    //   console.log(JSON.stringify(prof));
+    // }
+  };
+
+  const naverLoginProcess = () => {
+    return new Promise((resolve, reject) => {
+      NaverLogin.login(androidKeys, (err, token) => {
+        console.log(`\n\n  Token is fetched  :: ${JSON.stringify(token.accessToken)} \n\n`);
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(token);       
+      });
+    });
+  };
+
+  const signWithNaver = async () => {
+      let token = await naverLoginProcess();
+      console.log(token.accessToken);
+      let profile = await getProfile(token.accessToken);
+      console.log(profile);
+    
+  };
 
   return(
     <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
@@ -68,10 +108,10 @@ const Login = ({navigation}) => {
       <YellowCon>
         <Image source={images.yellowCharacter} />
       </YellowCon>
-      <LoginCon x={480} y={50} onPress={() => navigation.navigate("NickName")}>
+      <LoginCon x={480} y={50} onPress={signWithKakao}>
         <LoginButton source={images.kakaoLogin}/>
       </LoginCon>
-      <LoginCon x={540} y={50} onPress={_onPress}>
+      <LoginCon x={540} y={50} onPress={signWithNaver}>
         <LoginButton source={images.naverLogin}/>
       </LoginCon>
       <LoginCon x={600} y={50} onPress={_onPress}>
