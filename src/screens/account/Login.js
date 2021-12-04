@@ -5,20 +5,21 @@ import {images} from "../../images";
 import {getFontSize, getWidth, getHeight} from "../.././hooks/caculateSize";
 import * as KakaoLogin from "@react-native-seoul/kakao-login";
 import * as NaverLogin from "@react-native-seoul/naver-login";
-import {GoogleSignin} from "@react-native-google-signin/google-signin";
+import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
 import {ProgressContext, BasicContext} from "../../contexts";
-
-GoogleSignin.configure({
-  webClientId: "774708555233-3o95o1bgpis9c3oshr2divc4oheijuni.apps.googleusercontent.com",
-  offlineAccess: true,
-});
 
 const loginFont = getFontSize(50);
 
+GoogleSignin.configure({
+  webClientId: "774708555233-j6sf1mrqhfbrldu3r3ae4dc2vi5pb03i.apps.googleusercontent.com",
+  forceCodeForRefreshToken: true,
+  offlineAccess: true,
+});
+
 const androidKeys = {
   kConsumerKey: "TMhSMPDrwSW4RIt1KM0a",
-  kConsumerSecret: "SG42oKEsrX",
-  kServiceAppName: "테스트앱(안드로이드)"
+  kConsumerSecret: "Ho04pDCBP2",
+  kServiceAppName: "테스트앱(안드로이드)",
 };
 
 const LoginText = styled.Text`
@@ -99,7 +100,6 @@ const Login = ({navigation}) => {
   const naverLoginProcess = () => {
     return new Promise((resolve, reject) => {
       NaverLogin.NaverLogin.login(androidKeys, (err, token) => {
-        console.log(`\n\n  Token is fetched  :: ${JSON.stringify(token.accessToken)} \n\n`);
         if (err) {
           reject(err);
           return;
@@ -110,6 +110,8 @@ const Login = ({navigation}) => {
   };
 
   const signWithNaver = async () => {
+
+    
       let result = await naverLoginProcess();
       if(result){
         let token = result.accessToken;
@@ -138,9 +140,34 @@ const Login = ({navigation}) => {
     try{
       await GoogleSignin.hasPlayServices();
       let userInfo = await GoogleSignin.signIn();
-      console.log(JSON.stringify(userInfo));
+      let result = await GoogleSignin.getTokens();
+      let token = result.accessToken;
+      let email = userInfo.user.email;
+      let image = userInfo.user.photo;
+      let info = {
+        profileImage: image,
+        email: email,
+      }
+      if(email){
+        setProvier("google");
+        setToken(token);
+        setUserInfo(info);
+        navigation.navigate("NickName"); 
+      }else{
+        alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
+      }
     }catch (error) {
-      console.log(JSON.stringify(error));
+      console.log(error.message);
+      if(error.code === statusCodes.SIGN_IN_CANCELLED){
+        console.log('User Cancelled the Login Flow');
+      }else if(error.code === statusCodes.IN_PROGRESS){
+        console.log('Signing In');
+      }else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE){
+        console.log('Play Services Not Available');
+      }else {
+        console.log('Some other Error Happened');
+      }
+      alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } 
   };
 

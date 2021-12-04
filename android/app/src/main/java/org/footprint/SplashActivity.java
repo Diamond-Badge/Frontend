@@ -1,4 +1,4 @@
-package com.footprint; 
+package org.footprint;
 
 import android.content.Intent;
 import android.os.Bundle;
