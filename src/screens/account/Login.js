@@ -1,10 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {Text, View, StatusBar, Button, Dimensions, Image, TouchableOpacity} from 'react-native';
 import styled from "styled-components/native";
 import {images} from "../../images";
 import {getFontSize, getWidth, getHeight} from "../.././hooks/caculateSize";
-import {login} from "@react-native-seoul/kakao-login";
-import {NaverLogin, getProfile} from "@react-native-seoul/naver-login";
+import * as KakaoLogin from "@react-native-seoul/kakao-login";
+import * as NaverLogin from "@react-native-seoul/naver-login";
+import {GoogleSignin} from "@react-native-google-signin/google-signin";
+import {ProgressContext, BasicContext} from "../../contexts";
+
+GoogleSignin.configure({
+  webClientId: "774708555233-3o95o1bgpis9c3oshr2divc4oheijuni.apps.googleusercontent.com",
+  offlineAccess: true,
+});
 
 const loginFont = getFontSize(50);
 
@@ -61,25 +68,37 @@ const LoginButton = styled.Image`
 `;
 
 const Login = ({navigation}) => {
-
-
-
-  const _onPress = () => {
-    navigation.navigate("NickName")
-  }
-
+  const {setLoginSuccess, setProvier, setToken, setUserInfo} = useContext(BasicContext);
+  const {spinner} = useContext(ProgressContext);
+  
   const signWithKakao = async () => {
-    var result = await login();
-    var token = result.accessToken;
-    // if(result) {
-    //   var prof = await getProfile();
-    //   console.log(JSON.stringify(prof));
-    // }
+    var result = await KakaoLogin.login();
+    if(result) {
+      let token = result.accessToken;
+      let prof = await KakaoLogin.getProfile();
+      let image = prof.thumbnailImageUrl;
+      let email = prof.email;
+      let info = {
+        profileImage: image,
+        email: email,
+      };
+      if(email){
+        setProvier("kakao");
+        setToken(token);
+        setUserInfo(info);
+        //local 자동 로그인 시 수정 예정 
+        navigation.navigate("NickName");
+      }else{
+        alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
+      }
+    }else{
+      alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
+    }
   };
 
   const naverLoginProcess = () => {
     return new Promise((resolve, reject) => {
-      NaverLogin.login(androidKeys, (err, token) => {
+      NaverLogin.NaverLogin.login(androidKeys, (err, token) => {
         console.log(`\n\n  Token is fetched  :: ${JSON.stringify(token.accessToken)} \n\n`);
         if (err) {
           reject(err);
@@ -91,11 +110,38 @@ const Login = ({navigation}) => {
   };
 
   const signWithNaver = async () => {
-      let token = await naverLoginProcess();
-      console.log(token.accessToken);
-      let profile = await getProfile(token.accessToken);
-      console.log(profile);
-    
+      let result = await naverLoginProcess();
+      if(result){
+        let token = result.accessToken;
+        let profile = await NaverLogin.getProfile(token);
+        let email = profile.response.email;
+        let image = profile.response.profile_image;
+        let info = {
+          profileImage: image,
+          email: email,
+        }
+        if(email){
+          setProvier("naver");
+          setToken(token);
+          setUserInfo(info);
+          navigation.navigate("NickName"); 
+        }else{
+          alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
+        }
+      }else{
+        alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
+      }
+  };
+
+  // 애뮬레이터 등록 sha-1 관련 이슈 있어서 우선 넘김 
+  const signWithGoogle = async () => {
+    try{
+      await GoogleSignin.hasPlayServices();
+      let userInfo = await GoogleSignin.signIn();
+      console.log(JSON.stringify(userInfo));
+    }catch (error) {
+      console.log(JSON.stringify(error));
+    } 
   };
 
   return(
@@ -108,13 +154,15 @@ const Login = ({navigation}) => {
       <YellowCon>
         <Image source={images.yellowCharacter} />
       </YellowCon>
+      
+      {/* 로그인 버튼들*/}
       <LoginCon x={480} y={50} onPress={signWithKakao}>
         <LoginButton source={images.kakaoLogin}/>
       </LoginCon>
       <LoginCon x={540} y={50} onPress={signWithNaver}>
         <LoginButton source={images.naverLogin}/>
       </LoginCon>
-      <LoginCon x={600} y={50} onPress={_onPress}>
+      <LoginCon x={600} y={50} onPress={signWithGoogle}>
         <LoginButton source={images.googleLogin}/>
       </LoginCon>
     </View>
