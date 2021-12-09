@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {View} from 'react-native';
 import styled from "styled-components/native";
 import {getFontSize, getWidth, getHeight} from "../../hooks/caculateSize";
-
+import {BasicContext} from "../../contexts";
 
 const PressButton = styled.TouchableOpacity`
   position: absolute;
@@ -65,10 +65,12 @@ const StyledInput = styled.TextInput`
 
 const NickName = ({navigation}) => {
     const [name, setName] = useState("");
+    const {setLoginSuccess, setNickName} = useContext(BasicContext);
 
     const _onPress = () => {
-        navigation.navigate("Login")
-      }
+        setNickName(name);
+        setLoginSuccess(true);
+      };
 
   return(
     <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>

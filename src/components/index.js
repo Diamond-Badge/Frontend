@@ -2,7 +2,9 @@ import PinkButton from "./PinkButton";
 import ImageButton from "./ImageButton";
 import MonthCalendar from "./MonthCalendar";
 import WeekCalendar from "./WeekCalendar";
-import AskEmotion from "./AskEmotion"
-import DiaryPhotoAdd from "./DiaryPhotoAdd"
+import EmotionRatio from './EmotionRatio';
+import LocationRank from './LocationRank';
 
-export { PinkButton, ImageButton, MonthCalendar, WeekCalendar, AskEmotion, DiaryPhotoAdd };
+export { PinkButton, ImageButton, MonthCalendar, WeekCalendar, EmotionRatio, LocationRank };
+
+

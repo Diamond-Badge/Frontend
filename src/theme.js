@@ -10,6 +10,13 @@ export const color={
     salmon: "#ee7d73",
     lightYellow: "#ede7dc",
     darkPink: "#e48981",
+    characterYellow: "#ffe097",
+    orageRed: "#f43838",
+    edgePink: "#f6c3c1",
+    pink: "#f6c3c1",
+    grey: "#eaeaea",
+    ppink:"#ffc1c0",
+    pale: "#ffd4d4",
 };
 
 export const theme = {
@@ -23,4 +30,13 @@ export const theme = {
     toggleTrue: color.salmon,
     toggleFalse: color.grey,
     toggleThumb: color.white,
+    characterYellow: color.characterYellow,
+    DiaryImageBlack: color.orageRed,
+    edgePink: color.edgePink,
+    diaryborder : color.pink,
+    monthcolor: color.pink,
+    modalpink : color.pink,
+    greybutton: color.grey,
+    pinkbutton: color.ppink,
+    diaryadd: color.pale,
 };
