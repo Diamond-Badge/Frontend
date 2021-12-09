@@ -18,6 +18,18 @@ import locationIcon from "./assets/images/mypage/locationIcon.png";
 import first from "./assets/images/mypage/first.png";
 import second from "./assets/images/mypage/second.png";
 import third from "./assets/images/mypage/third.png";
+import CalendarBorder from './assets/images/calendar/CalendarBorder.png';
+import NovDrawing from './assets/images/calendar/NovDrawing.png';
+import notselected from './assets/images/calendar/notselected.png';
+import calendarpic from './assets/images/calendar/calendarpic.png';
+import calendarcontent from './assets/images/calendar/calendarcontent.png';
+import diaryborder from './assets/images/diary/diaryborder.png';
+import emotionadd from './assets/images/diary/emotionadd.png';
+import diaryicon from './assets/images/diary/diaryicon.png';
+import diaryedit from './assets/images/diary/diaryedit.png';
+import placeadd from './assets/images/diary/placeadd.png';
+
+
 
 export const images = {
     redCharacter,
@@ -40,4 +52,14 @@ export const images = {
     first,
     second,
     third,
+    CalendarBorder,
+    NovDrawing,
+    notselected,
+    calendarpic,
+    calendarcontent,
+    diaryborder,
+    emotionadd,
+    diaryedit,
+    diaryicon,
+    placeadd,
 };
