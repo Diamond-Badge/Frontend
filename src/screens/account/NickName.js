@@ -65,11 +65,12 @@ const StyledInput = styled.TextInput`
 
 const NickName = ({navigation}) => {
     const [name, setName] = useState("");
-    const {setLoginSuccess} = useContext(BasicContext);
+    const {setLoginSuccess, setNickName} = useContext(BasicContext);
 
     const _onPress = () => {
+        setNickName(name);
         setLoginSuccess(true);
-      }
+      };
 
   return(
     <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>

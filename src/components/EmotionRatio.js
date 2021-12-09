@@ -36,7 +36,7 @@ EmotionRatio.propTypes = {
     iconImage: PropTypes.any.isRequired,
     iconLeft: PropTypes.number.isRequired,
     textLeft: PropTypes.number.isRequired,
-    ratioText: PropTypes.string.isRequired
+    ratioText: PropTypes.number.isRequired
 };
 
 

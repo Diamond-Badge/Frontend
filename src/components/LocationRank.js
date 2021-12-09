@@ -28,7 +28,7 @@ const LocationRank = ({iconTop, iconImage, iconText, locationText, locationTop})
 LocationRank.propTypes = {
     iconTop: PropTypes.number.isRequired,
     iconImage: PropTypes.any.isRequired,
-    iconText: PropTypes.string.isRequired,
+    iconText: PropTypes.number.isRequired,
     locationText: PropTypes.string.isRequired,
     locationTop: PropTypes.number.isRequired,
 };
