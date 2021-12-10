@@ -40,6 +40,9 @@ import emotionadd from './assets/images/diary/emotionadd.png';
 import diaryicon from './assets/images/diary/diaryicon.png';
 import diaryedit from './assets/images/diary/diaryedit.png';
 import placeadd from './assets/images/diary/placeadd.png';
+import NovText from "./assets/images/calendar/NovText.png";
+import JanText from "./assets/images/calendar/JanText.png";
+import JanDrawing from "./assets/images/calendar/JanDrawing.png";
 
 export const images = {
     redCharacter,
@@ -84,4 +87,7 @@ export const images = {
     diaryedit,
     diaryicon,
     placeadd,
+    NovText,
+    JanDrawing,
+    JanText,
 };
