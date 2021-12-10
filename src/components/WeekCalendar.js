@@ -4,19 +4,20 @@ import styled from "styled-components/native";
 import {getFontSize, getWidth, getHeight} from "../hooks/caculateSize";
 import { images } from '../images';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {MonthText, MonthDrawing} from "../components";
 
 var moment = require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 exports.moment = moment;
 
 const CalendarView = styled.View`
-    position: absolute;
     width: ${getWidth(320)}px;
-    height: ${getHeight(550)}px;
-    top: ${getHeight(110)}px;
+    top: ${getHeight(11)}px;
     left: ${getWidth(20)}px;
     right: ${getWidth(20)}px;
-    justify-content: center;
+    border-color: ${({theme}) => theme.monthcolor};
+    border-width: ${getHeight(2)}px;
+    border-radius: 16;
     align-items: center;
 `;
 
@@ -31,22 +32,19 @@ const MonthView = styled.View`
     align-items: center;
 `;
 
-const MonthText = styled.Text`
-    font-family: 'KOTRA HOPE_TTF';
-    font-size: ${getFontSize(70)}px;
-    font-style: normal;
-    letter-spacing: 0;
-    text-align: center;
-    color: ${({theme}) => theme.monthcolor};
-`;
+// const MonthText = styled.Text`
+//     font-family: 'KOTRA HOPE_TTF';
+//     font-size: ${getFontSize(70)}px;
+//     font-style: normal;
+//     letter-spacing: 0;
+//     text-align: center;
+//     color: ${({theme}) => theme.monthcolor};
+// `;
 
 const DrawingText = styled.View`
-    position: absolute;
+    top: ${getHeight(19)}px;
     width: ${getWidth(243)}px;
-    height: ${getHeight(160)}px;
-    top: ${getHeight(30)}px;
-    left: ${getWidth(37)}px;
-    right: ${getWidth(40)}px;
+    margin-bottom: ${getHeight(20)}px;
 `;
 
 const DateText = styled.Text`
@@ -61,13 +59,14 @@ const DateText = styled.Text`
 const DayView = styled.View`
     width: ${getWidth(34.4)}px;
     height: ${getHeight(34)}px;
-    margin-bottom: ${getHeight(16)}px;
 `;
 
 const DateView = styled.TouchableOpacity`
     width: ${getWidth(34.4)}px;
     height: ${getHeight(34)}px;
     margin-bottom: ${getHeight(16)}px;
+    justify-content: center;
+    align-items: center;
 `;
 
 const WeekCalendar = () => {
@@ -156,7 +155,7 @@ const WeekCalendar = () => {
           }
         
           return (
-              <View style={{top: getHeight(200), position:'absolute'}}>
+              <View>
                 <View style={styles.row}>
                     {day.map((d, index) => 
                         <DayView key = {index}>
@@ -170,38 +169,48 @@ const WeekCalendar = () => {
 
     return (
         <View> 
-            <View style={styles.calborder}/>
-            <View style={{top: getHeight(67)}}>
-                <DateText size={30}>{year}년 {month}월</DateText>
+             <View style={{top: getHeight(2), 
+                flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                <TouchableOpacity 
+                    onPress={_prevMonth}>
+                    <DateText size={20}>◀</DateText>
+                </TouchableOpacity>
+                    <DateText size={30} style={{paddingLeft: getWidth(11), paddingRight: getWidth(11)}}>{year}년 {month}월</DateText>
+                <TouchableOpacity 
+                    onPress={_nextMonth}>
+                    <DateText size={20}>▶</DateText>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity style={{top: getHeight(74), position:'absolute', left: getWidth(110),}}
-                onPress={_prevMonth}>
-                <DateText size={20}>◀</DateText>
-            </TouchableOpacity>
-            <TouchableOpacity style={{top: getHeight(74), position:'absolute',right: getWidth(110)}}
-                onPress={_nextMonth}>
-                <DateText size={20}>▶</DateText>
-            </TouchableOpacity>
 
-            <TouchableOpacity style={{top: getHeight(310), position:'absolute', left: getWidth(130)}}
-                onPress={_prevWeek}>
-                <DateText size={20}>◀</DateText>
-            </TouchableOpacity>
-            <TouchableOpacity style={{top: getHeight(310), position:'absolute', right: getWidth(143.9)}}
-                onPress={_nextWeek}>
-                <DateText size={20}>▶</DateText>
-            </TouchableOpacity>
             
-        <CalendarView>
-                <DrawingText>
-                    <Image source={images.NovDrawing} style={styles.drawing}/>
+        <CalendarView> 
+            <MonthText month={month} />
+            <MonthDrawing month={month} />
+            <View style={{width: "100%", flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 10}}>
+                
+                <TouchableOpacity 
+                    onPress={_prevWeek}>
+                    <DateText size={20}>◀</DateText>
+                </TouchableOpacity>
+                <DateText size={30} style={{paddingLeft: getWidth(11), paddingRight: getWidth(11), opacity: 0}}>0000년 00월</DateText>
+                <TouchableOpacity 
+                    onPress={_nextWeek}>
+                    <DateText size={20}>▶</DateText>
+                </TouchableOpacity>
+            </View>
+                <DrawingText style={{marginRight:getWidth(25.3), marginLeft:getWidth(25.3)}}>
                     {generate()}
                 </DrawingText>
-            <MonthView>
-            <MonthText>{month}</MonthText>                        
-            </MonthView>
-            
         </CalendarView>
+
+        <View style={{top: getHeight(40), left: getWidth(20)}}>
+            <DateText size={20} align={'left'}>{month}월 {day}일</DateText>
+            <TouchableOpacity style={{flexDirection: "row", marginTop: getHeight(3)}}>
+            <Image resizeMode='stretch' style={{marginRight: getWidth(10), width: getWidth(80), height: getHeight(80)}} source={images.calendarpic}/>
+            <Image resizeMode='stretch' style={{width: getWidth(232), height: getHeight(80)}} source={images.calendarcontent}/>
+            </TouchableOpacity>
+        </View>
+        
         </View>
     );
 };

@@ -17,6 +17,16 @@ const TitleText = styled.Text`
     color: ${({theme}) => theme.blackText};
 `;  
 
+const CalendarText = styled.Text`
+    font-family: '나눔손글씨 중학생';
+    font-size: ${({size}) => getFontSize(size)}px;
+    font-style: normal;
+    letter-spacing: 0;
+    text-align: center;
+    color: ${({theme}) => theme.blackText};
+    margin-top: ${getHeight(30)};
+`;  
+
 
 const Calendar = () => {
 
@@ -43,12 +53,16 @@ const Calendar = () => {
     return (
         <ScrollView>
             <ImageBackground source={require("../assets/images/background.png")} style={{ height: HEIGHT*1.05}}>
-                <View style={styles.title}>
-                    <TitleText size={30} >CALENDAR</TitleText>
-                </View>
-                {generate()}
+                <View style={{flex: 1}}>
+                    <CalendarText size={30} >CALENDAR</CalendarText>
+
+                    {generate()}
+
                 <TouchableOpacity style={[styles.calselect,styles.selectborder]} onPress={_handleChangeModal}>
-                    <TitleText size={20} align={'left'} style={{left: getWidth(14), top: getHeight(2)}}>{text}</TitleText>
+                    <View style={{flexDirection: "row"}}>
+                        <TitleText size={20} align={'left'} style={{left: getWidth(14), top: getHeight(2)}}>{text}</TitleText>
+                        <Text style={{position: "absolute", right: getWidth(5), fontSize: 20}}>▼</Text>
+                    </View>
                 </TouchableOpacity>
                 <Modal visible={isChangeModal} transparent={true} >
                     <TouchableOpacity style={{position:'absolute', height:'100%', width:'100%'}} onPress={() => setIsChangeModal(false)} />
@@ -67,7 +81,7 @@ const Calendar = () => {
                     containerStyle={styles.mapicon} imgStyle={styles.mapimage}
                     onPress={_handleMapPress}
                     src={require('../assets/images/mapversion.png')} />
-                
+            </View>
             </ImageBackground>
         </ScrollView>
     )
@@ -75,20 +89,21 @@ const Calendar = () => {
 
 const styles = StyleSheet.create({
     title: {
-        position: 'absolute',
         top: getHeight(30),
-        left: getWidth(135),
-        right: getWidth(133),
+        justifyContent: "center",
+        alignItems: "center",
+        height: getHeight(35),
     },
     mapicon:{
         position: 'absolute',
         top: getHeight(31),
-        left: getWidth(311),
         right: getWidth(20),
+        
     },
     mapimage: {
-        height: 29,
-        width: 29,
+        height: getHeight(29),
+        width: getWidth(29),
+        resizeMode: "contain",
     },
     row: {
         flexDirection:'row'
@@ -102,7 +117,7 @@ const styles = StyleSheet.create({
         borderColor: "#eec5c2",
     },
     calselect:{
-        top: getHeight(70),
+        top: getHeight(67),
         width: getWidth(66),
         height: getHeight(30),
         borderRadius: 10,
