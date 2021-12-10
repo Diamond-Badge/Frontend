@@ -4,11 +4,10 @@ import styled from "styled-components/native";
 import {getFontSize, getWidth, getHeight} from "../hooks/caculateSize";
 import { images } from '../images';
 import DropDownPicker from 'react-native-dropdown-picker';
-import moment from 'moment';
 
-// var moment = require('moment-timezone');
-// moment.tz.setDefault("Asia/Seoul");
-// exports.moment = moment;
+var moment = require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
+exports.moment = moment;
 
 const CalendarView = styled.View`
     position: absolute;
@@ -71,7 +70,7 @@ const DateView = styled.TouchableOpacity`
     margin-bottom: ${getHeight(16)}px;
 `;
 
-const MonthCalendar = () => {
+const WeekCalendar = () => {
 
     const [date, setDate] = useState(moment());
     
@@ -87,31 +86,44 @@ const MonthCalendar = () => {
 
     // 저번 달
     const _prevMonth = () => {
-        setDate(date.clone().subtract(1, 'M'));
+        setDate(date.clone().subtract(1, 'M').startOf('month'));
         setYear(date.clone().subtract(1, 'M').format('YYYY'));
         setMonth(date.clone().subtract(1, 'M').format('MM'));
     };
 
     // 다음 달
-
     const _nextMonth = () => {
-        setDate(date.clone().add(1, 'M'));
+        setDate(date.clone().add(1, 'M').startOf('month'));
         setYear(date.clone().add(1, 'M').format('YYYY'));
         setMonth(date.clone().add(1, 'M').format('MM'));
     };
 
+    // 저번 주
+    const _prevWeek = () => {
+        setDate(date.clone().subtract(1, 'w'));
+        setYear(date.clone().subtract(1, 'w').format('YYYY'));
+        setMonth(date.clone().subtract(1, 'w').format('MM'));
+    };
+
+    // 다음 주
+    const _nextWeek = () => {
+        setDate(date.clone().add(1, 'w'));
+        setYear(date.clone().add(1, 'w').format('YYYY'));
+        setMonth(date.clone().add(1, 'w').format('MM'));
+    };
+
     const handleDayClick = (current) => {setDay(current);};
+
 
     const generate = () => {
         const today = date;
+        const startWeek = today.clone().week();
 
-        const startWeek = today.clone().startOf('month').week();
-        const endWeek = today.clone().endOf('month').week() === 1 ? 53 : today.clone().endOf('month').week();
-        
+        console.log(startWeek);
+
         let calendar = [];
         let day =['일','월','화','수','목','금','토'];
-
-        for (let week = startWeek; week <= endWeek; week++) {
+        for (let week = startWeek; week <= startWeek; week++) {
             calendar.push(
                 <View style={styles.row}>
                 {Array(7)
@@ -132,7 +144,7 @@ const MonthCalendar = () => {
 
                     return (
                         <DateView onPress={() => {handleDayClick(current.format('D'))}}>
-                        {isNotMonth &&
+                        {
                             <>
                             <Image source={images.notselected} style={styles.emotion}/>
                             <DateText style={styles.textcenter}>{current.format('D')}</DateText></>}
@@ -142,8 +154,9 @@ const MonthCalendar = () => {
               </View>,
             );
           }
+        
           return (
-              <View>
+              <View style={{top: getHeight(200), position:'absolute'}}>
                 <View style={styles.row}>
                     {day.map((d, index) => 
                         <DayView key = {index}>
@@ -157,6 +170,7 @@ const MonthCalendar = () => {
 
     return (
         <View> 
+            <View style={styles.calborder}/>
             <View style={{top: getHeight(67)}}>
                 <DateText size={30}>{year}년 {month}월</DateText>
             </View>
@@ -168,8 +182,17 @@ const MonthCalendar = () => {
                 onPress={_nextMonth}>
                 <DateText size={20}>▶</DateText>
             </TouchableOpacity>
+
+            <TouchableOpacity style={{top: getHeight(310), position:'absolute', left: getWidth(130)}}
+                onPress={_prevWeek}>
+                <DateText size={20}>◀</DateText>
+            </TouchableOpacity>
+            <TouchableOpacity style={{top: getHeight(310), position:'absolute', right: getWidth(143.9)}}
+                onPress={_nextWeek}>
+                <DateText size={20}>▶</DateText>
+            </TouchableOpacity>
+            
         <CalendarView>
-            <Image source={images.CalendarBorder} style={styles.calendar}/>
                 <DrawingText>
                     <Image source={images.NovDrawing} style={styles.drawing}/>
                     {generate()}
@@ -177,17 +200,24 @@ const MonthCalendar = () => {
             <MonthView>
             <MonthText>{month}</MonthText>                        
             </MonthView>
+            
         </CalendarView>
-        <View style={styles.dayview}><DateText size={20} align={'left'}>{month}월 {day}일</DateText></View>
-        <TouchableOpacity>
-            <View style={styles.calendarpic}><Image source={images.calendarpic} style={styles.calendar}/></View>
-            <View style={styles.calendarcontent}><Image source={images.calendarcontent} style={styles.calendar}/></View>
-        </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    calborder:{
+        top: getHeight(113),
+        left: getWidth(20),
+        width: getWidth(322),
+        height: getHeight(327),
+        borderRadius: 16,
+        borderStyle: "solid",
+        borderWidth: 2,
+        borderColor: "#eec5c2",
+        position:'absolute',
+    },
     calendar: {
         width: '100%',
         height: '100%',
@@ -230,4 +260,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default MonthCalendar;
+export default WeekCalendar;
