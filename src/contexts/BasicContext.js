@@ -14,6 +14,8 @@ const BasicContext = createContext({
     setNickName: () => {},
     isPublic: false,
     setIsPublic: () => {},
+    jwt: "",
+    setJwt: () => {},
 });
 
 const BasicProvider = ({children}) => {
@@ -23,6 +25,7 @@ const BasicProvider = ({children}) => {
     const [userInfo, setUserInfo] = useState({});
     const [nickName, setNickName] = useState("");
     const [isPublic, setIsPublic] = useState(false);
+    const [jwt, setJwt] = useState("");
 
     const value = {
         loginSuccess, 
@@ -37,11 +40,13 @@ const BasicProvider = ({children}) => {
         setNickName,
         isPublic,
         setIsPublic,
+        jwt,
+        setJwt,
     };
 
-    useEffect(()=> {
-        console.log(value);
-    },[value]);
+    // useEffect(()=> {
+    //     console.log(value);
+    // },[value]);
 
     return <BasicContext.Provider value={value}>
         {children}
