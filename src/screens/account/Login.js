@@ -1,12 +1,12 @@
-import React, {useEffect, useState, useContext} from 'react';
-import {Text, View, StatusBar, Button, Dimensions, Image, TouchableOpacity} from 'react-native';
+import React, {useContext} from 'react';
+import {View, StatusBar, Image} from 'react-native';
 import styled from "styled-components/native";
 import {images} from "../../images";
 import {getFontSize, getWidth, getHeight} from "../.././hooks/caculateSize";
 import * as KakaoLogin from "@react-native-seoul/kakao-login";
 import * as NaverLogin from "@react-native-seoul/naver-login";
 import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
-import {ProgressContext, BasicContext} from "../../contexts";
+import {ProgressContext, BasicContext, UrlContext} from "../../contexts";
 
 const loginFont = getFontSize(50);
 
@@ -69,32 +69,108 @@ const LoginButton = styled.Image`
 `;
 
 const Login = ({navigation}) => {
-  const {setLoginSuccess, setProvier, setToken, setUserInfo} = useContext(BasicContext);
+  const {setLoginSuccess, setToken, setJwt, setNickName, setUserInfo, setIsPublic, setProvier} = useContext(BasicContext);
   const {spinner} = useContext(ProgressContext);
+  const {url} = useContext(UrlContext);
   
+  // 이미 가입한 회원인지 판별 등록한 닉네임이랑 이메일이랑 같은지로 판단
+  // 이미 가입한 경우에는 바로 메인 탭으로, 새 회원인 경우에는 닉네임 설정으로 이동.
+  const CheckSigned = async (jwtData) => {
+    let fixedUrl = url+"/api/v1/user";
+  
+    let option ={
+      method: 'get',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type':'application/json',
+        'Autorization': jwtData,
+      }
+    };
+
+    try{
+      spinner.start();
+      let response = await fetch(fixedUrl, option);
+      let res = await response.json();
+      if(res.success){
+            // 이메일
+            let em = res.data.email;
+            // 닉네임
+            let un = res.data.username;
+            let image = res.data.profileImageUrl;
+            let providerType = res.data.providerType;
+            let isPrivate = res.data.private;
+            let info = {
+              profileImage: image,
+              email: em,
+            };
+            setUserInfo(info);
+            setIsPublic(!isPrivate);
+            setProvier(providerType);
+            // 같은지 아닌지로 이전에 가입한지 판별 
+            if(em===un){
+                return "new";
+            }else{
+                setNickName(un);
+                return "not";
+            }
+      }else{
+        return "error";
+      }
+    }catch(e){
+      console.log(e);
+    }finally{
+      spinner.stop();
+    }
+};
+
+  // 서버로 소셜 accesstoken 보내서 jwt 받기 
+  const FetchToken = async (token, provider) => {
+    let fixedUrl = url+"/api/v1/auth/signin/"+provider+"?accessToken="+token;
+  
+    let option = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',   
+        'Content-Type': 'application/json'
+      }
+    };
+  
+    try{
+      spinner.start();
+      let response = await fetch(fixedUrl, option);
+      let res = await response.json();
+      if(res.success){
+            let jwtoken = res.data;
+            setJwt(jwtoken);
+            // 이미 가입한 경우에는 바로 메인 탭으로, 새 회원인 경우에는 닉네임 설정으로 이동.
+            let signed = await CheckSigned(jwtoken);
+            console.log(signed);
+            if(signed==="not"){
+              setLoginSuccess(true);
+            }else if(signed==="new"){
+              navigation.navigate("NickName");
+            }else{
+              alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
+            }
+      }else{
+        alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
+      }
+    }catch(e){
+     console.log(e)
+    }finally{
+      spinner.stop();
+    }
+  };
+
   const signWithKakao = async () => {
     var result = await KakaoLogin.login();
     if(result) {
       let token = result.accessToken;
-      let prof = await KakaoLogin.getProfile();
-      let image = prof.thumbnailImageUrl;
-      let email = prof.email;
-      let info = {
-        profileImage: image,
-        email: email,
-      };
-      if(email){
-        setProvier("kakao");
-        setToken(token);
-        setUserInfo(info);
-        //local 자동 로그인 시 수정 예정 
-        navigation.navigate("NickName");
+      setToken(token);
+      await FetchToken(token, "kakao");
       }else{
         alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
       }
-    }else{
-      alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
-    }
   };
 
   const naverLoginProcess = () => {
@@ -115,47 +191,21 @@ const Login = ({navigation}) => {
       let result = await naverLoginProcess();
       if(result){
         let token = result.accessToken;
-        let profile = await NaverLogin.getProfile(token);
-        let email = profile.response.email;
-        let image = profile.response.profile_image;
-        let info = {
-          profileImage: image,
-          email: email,
-        }
-        if(email){
-          setProvier("naver");
-          setToken(token);
-          setUserInfo(info);
-          navigation.navigate("NickName"); 
-        }else{
-          alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
-        }
+        setToken(token);  
+        await FetchToken(token, "naver");
       }else{
         alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
       }
   };
-
-  // 애뮬레이터 등록 sha-1 관련 이슈 있어서 우선 넘김 
+ 
   const signWithGoogle = async () => {
     try{
       await GoogleSignin.hasPlayServices();
       let userInfo = await GoogleSignin.signIn();
       let result = await GoogleSignin.getTokens();
       let token = result.accessToken;
-      let email = userInfo.user.email;
-      let image = userInfo.user.photo;
-      let info = {
-        profileImage: image,
-        email: email,
-      }
-      if(email){
-        setProvier("google");
-        setToken(token);
-        setUserInfo(info);
-        navigation.navigate("NickName"); 
-      }else{
-        alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
-      }
+      setToken(token);
+      await FetchToken(token, "google");
     }catch (error) {
       console.log(error.message);
       if(error.code === statusCodes.SIGN_IN_CANCELLED){
