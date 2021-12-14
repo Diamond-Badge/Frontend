@@ -6,8 +6,6 @@ const BasicContext = createContext({
     setLoginSuccess: () => {},
     provider: "",
     setProvier: () => {},
-    token: "",
-    setToken: () => {},
     userInfo: {},
     setUserInfo: () => {},
     nickName: "",
@@ -21,7 +19,6 @@ const BasicContext = createContext({
 const BasicProvider = ({children}) => {
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [provider, setProvier] = useState("");
-    const [token, setToken] = useState("");
     const [userInfo, setUserInfo] = useState({});
     const [nickName, setNickName] = useState("");
     const [isPublic, setIsPublic] = useState(false);
@@ -32,8 +29,6 @@ const BasicProvider = ({children}) => {
         setLoginSuccess,
         provider,
         setProvier,
-        token,
-        setToken,
         userInfo,
         setUserInfo,
         nickName, 

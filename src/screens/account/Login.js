@@ -69,11 +69,11 @@ const LoginButton = styled.Image`
 `;
 
 const Login = ({navigation}) => {
-  const {setLoginSuccess, setToken, setJwt, setNickName, setUserInfo, setIsPublic, setProvier} = useContext(BasicContext);
+  const {setLoginSuccess, setJwt, setNickName, setUserInfo, setIsPublic, setProvier} = useContext(BasicContext);
   const {spinner} = useContext(ProgressContext);
   const {url} = useContext(UrlContext);
   
-  // 이미 가입한 회원인지 판별 등록한 닉네임이랑 이메일이랑 같은지로 판단
+  // 이미 가입한 회원인지 판별 수정시간이랑 생성시간이랑 같은지로 판단
   // 이미 가입한 경우에는 바로 메인 탭으로, 새 회원인 경우에는 닉네임 설정으로 이동.
   const CheckSigned = async (jwtData) => {
     let fixedUrl = url+"/api/v1/user";
@@ -91,10 +91,11 @@ const Login = ({navigation}) => {
       spinner.start();
       let response = await fetch(fixedUrl, option);
       let res = await response.json();
+      console.log(res);
       if(res.success){
-            // 이메일
             let em = res.data.email;
-            // 닉네임
+            let created = res.data.createdAt;
+            let modified = res.data.modifiedAt;
             let un = res.data.username;
             let image = res.data.profileImageUrl;
             let providerType = res.data.providerType;
@@ -103,11 +104,13 @@ const Login = ({navigation}) => {
               profileImage: image,
               email: em,
             };
+            console.log("createdAt: "+created);
+            console.log("modifiedAt: "+modified);
             setUserInfo(info);
             setIsPublic(!isPrivate);
             setProvier(providerType);
             // 같은지 아닌지로 이전에 가입한지 판별 
-            if(em===un){
+            if(created===modified){
                 return "new";
             }else{
                 setNickName(un);
@@ -124,21 +127,25 @@ const Login = ({navigation}) => {
 };
 
   // 서버로 소셜 accesstoken 보내서 jwt 받기 
-  const FetchToken = async (token, provider) => {
-    let fixedUrl = url+"/api/v1/auth/signin/"+provider+"?accessToken="+token;
+  const FetchToken = async (tokenPrameter, provider) => {
+    let fixedUrl = url+"/api/v1/auth/signin/"+provider+"?accessToken="+tokenPrameter;
   
     let option = {
       method: 'POST',
       headers: {
-        Accept: 'application/json',   
-        'Content-Type': 'application/json'
-      }
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+      },
+      credentials: 'include',
     };
   
     try{
       spinner.start();
       let response = await fetch(fixedUrl, option);
       let res = await response.json();
+      console.log("fetch: "+tokenPrameter);
+      console.log(res);
+      console.log(fixedUrl);
       if(res.success){
             let jwtoken = res.data;
             setJwt(jwtoken);
@@ -163,16 +170,16 @@ const Login = ({navigation}) => {
   };
 
   const signWithKakao = async () => {
-    var result = await KakaoLogin.login();
-    if(result) {
-      let token = result.accessToken;
-      setToken(token);
-      await FetchToken(token, "kakao");
+    let kakaoResult = await KakaoLogin.login();
+    if(kakaoResult) {
+      let kakaoToken = kakaoResult.accessToken;
+      await FetchToken(kakaoToken, "kakao");
       }else{
         alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
       }
   };
 
+  // 네이버 access token 받기 
   const naverLoginProcess = () => {
     return new Promise((resolve, reject) => {
       NaverLogin.NaverLogin.login(androidKeys, (err, token) => {
@@ -186,13 +193,11 @@ const Login = ({navigation}) => {
   };
 
   const signWithNaver = async () => {
-
-    
-      let result = await naverLoginProcess();
-      if(result){
-        let token = result.accessToken;
-        setToken(token);  
-        await FetchToken(token, "naver");
+      let naverResult = await naverLoginProcess();
+      if(naverResult){
+        let naverToken = naverResult.accessToken;
+        console.log("naver process: "+naverToken);
+        await FetchToken(naverToken, "naver");
       }else{
         alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // 예외 처리 임시 
       }
@@ -202,10 +207,9 @@ const Login = ({navigation}) => {
     try{
       await GoogleSignin.hasPlayServices();
       let userInfo = await GoogleSignin.signIn();
-      let result = await GoogleSignin.getTokens();
-      let token = result.accessToken;
-      setToken(token);
-      await FetchToken(token, "google");
+      let googleResult = await GoogleSignin.getTokens();
+      let googleToken = googleResult.accessToken;
+      await FetchToken(googleToken, "google");
     }catch (error) {
       console.log(error.message);
       if(error.code === statusCodes.SIGN_IN_CANCELLED){
