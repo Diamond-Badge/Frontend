@@ -24,10 +24,12 @@ import notselected from './assets/images/calendar/notselected.png';
 import calendarpic from './assets/images/calendar/calendarpic.png';
 import calendarcontent from './assets/images/calendar/calendarcontent.png';
 import diaryborder from './assets/images/diary/diaryborder.png';
-import emotionadd from './assets/images/diary/emotionadd.png';
 import diaryicon from './assets/images/diary/diaryicon.png';
 import diaryedit from './assets/images/diary/diaryedit.png';
 import placeadd from './assets/images/diary/placeadd.png';
+import check from './assets/images/check.png';
+import emotionbubble from './assets/images/diary/emotionbubble.png';
+import mapversion from './assets/images/mapversion.png'
 
 
 
@@ -58,8 +60,10 @@ export const images = {
     calendarpic,
     calendarcontent,
     diaryborder,
-    emotionadd,
     diaryedit,
     diaryicon,
     placeadd,
+    check,
+    emotionbubble,
+    mapversion,
 };
