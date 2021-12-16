@@ -30,6 +30,8 @@ import placeadd from './assets/images/diary/placeadd.png';
 import check from './assets/images/check.png';
 import emotionbubble from './assets/images/diary/emotionbubble.png';
 import mapversion from './assets/images/mapversion.png'
+import emotionadd from './assets/images/diary/emotionadd.png';
+
 
 
 
@@ -66,4 +68,5 @@ export const images = {
     check,
     emotionbubble,
     mapversion,
+    emotionadd,
 };
