@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {View} from 'react-native';
 import styled from "styled-components/native";
 import {getFontSize, getWidth, getHeight} from "../../hooks/caculateSize";
+import {BasicContext, ProgressContext, UrlContext} from "../../contexts";
 
 
 const PressButton = styled.TouchableOpacity`
@@ -65,10 +66,44 @@ const StyledInput = styled.TextInput`
 
 const NickName = ({navigation}) => {
     const [name, setName] = useState("");
+    const {setLoginSuccess, setNickName, jwt} = useContext(BasicContext);
+    const {spinner} = useContext(ProgressContext);
+    const {url} = useContext(UrlContext);
 
-    const _onPress = () => {
-        navigation.navigate("Login")
+    const FetchNick = async (nickName) => {
+      let fixedUrl = url+"/api/v1/user/name?userName="+nickName;
+    
+
+      let option ={
+        method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type':'application/json',
+          'Autorization': jwt,
+        }
+      };
+    
+      try{
+        spinner.start();
+        let response = await fetch(fixedUrl, option);
+        let res = await response.json();
+        if(res.success){
+         setLoginSuccess(true);
+        }else{
+          alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
+        }
+      }catch(e)
+      {
+       console.log(e)
+      }finally{
+        spinner.stop();
       }
+    };
+
+    const _onPress = async () => {
+        setNickName(name);
+        await FetchNick(name);
+      };
 
   return(
     <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>

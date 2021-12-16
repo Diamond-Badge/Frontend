@@ -220,10 +220,8 @@ const styles = StyleSheet.create({
         left: getWidth(40),
         backgroundColor: theme.greybutton,
     }
-
     
 });
-
 
 
 export default DiaryFirst;

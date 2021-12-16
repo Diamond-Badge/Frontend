@@ -1,4 +1,4 @@
-package com.footprint;
+package org.footprint;
 
 import android.app.Application;
 import android.content.Context;
