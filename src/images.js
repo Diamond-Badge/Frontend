@@ -7,7 +7,7 @@ import background from "./assets/images/background.png";
 import whiteBackground from "./assets/images/mypage/whiteBackground.png";
 import profile from "./assets/images/mypage/profile.png";
 import mypageCharacter from "./assets/images/mypage/character.png";
-import gooleIcon from "./assets/images/mypage/gooleIcon.png";
+import googleIcon from "./assets/images/mypage/googleIcon.png";
 import angry from "./assets/images/mypage/angry.png";
 import depressed from "./assets/images/mypage/depressed.png";
 import sad from "./assets/images/mypage/sad.png";
@@ -43,6 +43,10 @@ import placeadd from './assets/images/diary/placeadd.png';
 import NovText from "./assets/images/calendar/NovText.png";
 import JanText from "./assets/images/calendar/JanText.png";
 import JanDrawing from "./assets/images/calendar/JanDrawing.png";
+import naverIcon from "./assets/images/mypage/naverIcon.png";
+import kakaoIcon from "./assets/images/mypage/kakaoIcon.png";
+import pencil from "./assets/images/mypage/pencil.png";
+import pencilRound from "./assets/images/mypage/pencilRound.png";
 
 export const images = {
     redCharacter,
@@ -54,7 +58,7 @@ export const images = {
     whiteBackground,
     profile,
     mypageCharacter,
-    gooleIcon,
+    googleIcon,
     angry,
     sad,
     depressed,
@@ -90,4 +94,8 @@ export const images = {
     NovText,
     JanDrawing,
     JanText,
+    kakaoIcon,
+    naverIcon,
+    pencil,
+    pencilRound,
 };
