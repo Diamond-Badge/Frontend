@@ -1,11 +1,11 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {Image, Alert ,Dimensions, View, ImageBackground, ScrollView, Switch, TouchableOpacity} from 'react-native';
+import {Image, Alert ,Dimensions, View, ImageBackground, ScrollView, Switch, TouchableOpacity, Modal, TextInput} from 'react-native';
 import styled, {ThemeContext} from "styled-components/native";
 import {images} from "../images";
 import {EmotionRatio, LocationRank} from "../components";
 import {BasicContext, ProgressContext, UrlContext} from "../contexts";
-import DialogInput from "react-native-dialog-input";
 import {launchCamera, launchImageLibrary} from "react-native-image-picker";
+import {removeWhitespace} from "../hooks/caculateSize";
 
 
 const HEIGHT = Dimensions.get('screen').height;
@@ -48,6 +48,15 @@ text-align: left;
 color: ${({theme}) => theme.blackText};
 `;
 
+const CountText = styled.Text`
+    font-family: '나눔손글씨 중학생';
+    font-size: ${({size}) => size? getFontSize(size): 25}px;
+    font-style: normal;
+    letter-spacing: 0;
+    text-align: left;
+    color: ${({theme}) => theme.blackText};
+`;
+
 
 
 
@@ -57,7 +66,9 @@ const Mypage = () => {
     const {url} = useContext(UrlContext);
     const {spinner} = useContext(ProgressContext);
     const [publicDiary, setPublicDiary] = useState(isPublic);
-    const [showDialog, setShowDialog] = useState(false);
+    const [nickModal, setNickModal] = useState(false);
+    const [nick, setNick] = useState("");
+    const [imageModal, setImageModal] = useState(false);
 
     useEffect(() => {
       console.log(userInfo);
@@ -81,6 +92,10 @@ const Mypage = () => {
     const [diaryPrevCount, setDiaryPrevCount] = useState(3);
     const [locPrevCount, setLocPrevCount] = useState(4);
     const [isFirst, setIsFirst] = useState(true);
+
+    // 계정 설정 
+    const [logoutModal, setLogoutModal] = useState(false);
+    const [signoutModal, setSignoutModal] = useState(false);
 
     useEffect(() => {
       if(isFirst===false){
@@ -139,8 +154,9 @@ const Mypage = () => {
         let response = await fetch(fixedUrl, option);
         let res = await response.json();
         if(res.success){
-          setShowDialog(false);
+          setNickModal(false);
           setNickName(nameText);
+          setNick("");
         }else{
           alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
         }
@@ -181,26 +197,12 @@ const Mypage = () => {
 
     //로그아웃 
     const _onLogout = () => {
-      Alert.alert(
-        "", "로그아웃하시겠습니까?",
-        [{ text: "취소", style: "cancel" ,onPress: () => {
-                          
-                        }},
-        { text: "확인", onPress: () => {
-            setLoginSuccess(false);
-        }}], {cancelable: true});
+      setLoginSuccess(false);
     };
 
     // 회원탈퇴
     const _onDelete = () => {
-      Alert.alert(
-        "", "탈퇴하시겠습니까?",
-        [{ text: "취소", style: "cancel", onPress: () => {
-                          
-        }},
-        { text: "확인", onPress: () => {
-          setLoginSuccess(false);
-        }}], {cancelable: true});
+      setLoginSuccess(false);
     };
  
 
@@ -279,26 +281,6 @@ const Mypage = () => {
       });
     };
 
-    // 이미지 선택 modal
-    const _onImagePress = () => {
-      Alert.alert(
-        "프로필 사진", "",
-        [{ text: "기본 이미지로 변경", onPress: () => {
-              
-        }},
-        { text: "카메라 찍기", onPress: () => {
-            let cameraPath = getFromCamera(); 
-        }},
-        { text: "앨범에서 선택", onPress: () => {
-            let galleryPath = getFromGallery();
-        }}], {cancelable: true});
-    };
-
-    // 닉네임 변경 클릭 이벤트 
-    const _onNamePress = (text) => {
-      FetchNick(text);
-    };
-
     return (
         <ImageBackground source={images.background} style={{width: "100%", height: "100%"}} resizeMode="cover">
           <ScrollView>
@@ -313,10 +295,27 @@ const Mypage = () => {
                 <Image source={images.mypageCharacter} style={{position: "absolute"}} resizeMode="stretch"/>
                 </>
               )}
-              <TouchableOpacity onPress={_onImagePress} style={{position: "absolute", bottom: 0, right: 0, width: getWidth(33), height: getHeight(33), backgroundColor: "white", borderRadius: getHeight(33)/2, borderWidth: 3, borderColor: theme.darkPinkIcon ,justifyContent: "center", alignItems: "center"}}>
+              <TouchableOpacity onPress={() => setImageModal(true)} style={{position: "absolute", bottom: 0, right: 0, width: getWidth(33), height: getHeight(33), backgroundColor: "white", borderRadius: getHeight(33)/2, borderWidth: 3, borderColor: theme.darkPinkIcon ,justifyContent: "center", alignItems: "center"}}>
                 <Image style={{width: getWidth(18.4), height: getHeight(18.4)}} source={images.pencil} />
               </TouchableOpacity>
               </View>
+
+              {imageModal? (
+                    <View style={{position: "absolute", width: "100%", height: "100%", backgroundColor: theme.whiteBackground, opacity: 0.3}}>
+                        <Modal visible={imageModal} transparent={true} >
+                            <View style={{position: "absolute", top: getHeight(260), alignSelf: "center", width: "90%", height: getHeight(120), borderRadius: 12, backgroundColor: theme.whiteBackground, borderStyle: "solid",
+                                          borderColor: theme.edgePink, borderWidth: 4, alignItems: "center", paddingTop: getHeight(13)}}>
+                                <CountText size={30}>프로필 이미지 변경</CountText>
+                                <TouchableOpacity onPress={() => setImageModal(pre => !pre)} style={{position: "absolute", right: "5%", top: "5%"}}><CountText>X</CountText></TouchableOpacity>
+                                <View style={{top: getHeight(73), position: "absolute", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                                <TouchableOpacity onPress={() => setImageModal(pre => !pre)} style={{width: "30%", height: getHeight(30), backgroundColor: theme.greybutton, borderRadius: 7, justifyContent: "center", alignItems: "center"}}><CountText>기본 이미지</CountText></TouchableOpacity>
+                                <TouchableOpacity onPress={() => {setImageModal(pre => !pre); let cameraPath = getFromCamera();}} style={{width: "30%", height: getHeight(30), backgroundColor: theme.pinkbutton, borderRadius: 7, justifyContent: "center", alignItems: "center"}}><CountText>카메라 찍기</CountText></TouchableOpacity>
+                                <TouchableOpacity onPress={() => {setImageModal(pre => !pre); let galleryPath = getFromGallery();}} style={{width: "30%", height: getHeight(30), backgroundColor: theme.pinkbutton, borderRadius: 7, justifyContent: "center", alignItems: "center"}}><CountText>앨범에서 선택</CountText></TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>)
+            : null}
 
               {/*이메일*/}
               <View style={{position: "absolute", width: "100%", top: getHeight(153), justifyContent: 'center', alignItems: "center"}}>
@@ -328,15 +327,24 @@ const Mypage = () => {
               {/*닉네임*/}  
               <View style={{flexDirection: "row", alignItems: "center"}}>
                 <AccountText size={25}>{nickName}</AccountText>
-                <TouchableOpacity onPress={() => {setShowDialog(true)}}><Image source={images.pencil} style={{marginLeft: getWidth(5), width: getWidth(15), height: getHeight(15)}}/></TouchableOpacity>
+                <TouchableOpacity onPress={() => {setNickModal(true)}}><Image source={images.pencil} style={{marginLeft: getWidth(5), width: getWidth(15), height: getHeight(15)}}/></TouchableOpacity>
               </View>
 
-              <DialogInput isDialogVisible={showDialog}
-                  title={"닉네임 변경"}
-                  hintInput ={"변경할 닉네임을 입력하세요."}
-                  submitInput={ (inputText) => {_onNamePress(inputText)} }
-                  closeDialog={ () => {setShowDialog(false)}}>
-              </DialogInput>
+              {nickModal? (
+                    <View style={{position: "absolute", width: "100%", height: "100%", backgroundColor: theme.whiteBackground, opacity: 0.3}}>
+                        <Modal visible={nickModal} transparent={true}>
+                            <View style={{position: "absolute", top: getHeight(260), left: getWidth(40), width: getWidth(280), height: getHeight(120), borderRadius: 12, backgroundColor: theme.whiteBackground, borderStyle: "solid",
+                                          borderColor: theme.edgePink, borderWidth: 4, alignItems: "center", paddingTop: getHeight(13)}}>
+                                <CountText>닉네임 변경</CountText>
+                                <TextInput style={{fontFamily: '나눔손글씨 중학생', fontSize: 25, padding: 0, paddingLeft: 10, borderWidth: 0.7, borderBottomColor: "gray"}} value={nick} onChangeText={(text) => setNick(removeWhitespace(text))} placeholder='닉네임을 입력하세요' returnKeyType='done' onSubmitEditing={() => {FetchNick(nick)}}/>
+                                <TouchableOpacity onPress={() => setNickModal(pre => !pre)} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73), left: getWidth(40)}}><Image source={images.cancelButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
+                                <TouchableOpacity onPress={() => {
+                                    FetchNick(nick);
+                                }} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73), right: getWidth(40)}}><Image source={images.okButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
+                            </View>
+                        </Modal>
+                    </View>)
+            : null}
 
               {/*공개 설정*/}
               <View style={{flexDirection: "row", alignItems: "center", height: getHeight(23)}}>
@@ -388,12 +396,47 @@ const Mypage = () => {
 
               {/*계정 관리*/}
               <InfoText top={800} left={40} size={30}>계정 관리</InfoText>
-              <TouchableOpacity onPress={_onLogout}>
+              <TouchableOpacity onPress={() => setLogoutModal(true)}>
                 <InfoText top={851} left={40} size={20}>로그 아웃</InfoText>
               </TouchableOpacity>
-              <TouchableOpacity onPress={_onDelete}>
+              <TouchableOpacity onPress={() => setSignoutModal(true)}>
                 <InfoText top={897} left={40} size={20}>회원 탈퇴</InfoText>
               </TouchableOpacity>
+
+              {logoutModal? (
+                    <View style={{position: "absolute", width: "100%", height: "100%", backgroundColor: theme.whiteBackground, opacity: 0.3}}>
+                        <Modal visible={logoutModal} transparent={true}>
+                            <View style={{position: "absolute", top: getHeight(260), left: getWidth(40), width: getWidth(280), height: getHeight(120), borderRadius: 12, backgroundColor: theme.whiteBackground, borderStyle: "solid",
+                                          borderColor: theme.edgePink, borderWidth: 4, alignItems: "center", paddingTop: getHeight(13)}}>
+                                <CountText> 로그아웃하시겠습니까?</CountText>
+                                <TouchableOpacity onPress={() => setLogoutModal(pre => !pre)} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73), left: getWidth(40)}}><Image source={images.cancelButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
+                                <TouchableOpacity onPress={() => {
+                                    setLogoutModal(pre => !pre);
+                                    _onLogout();
+                                }} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73), right: getWidth(40)}}><Image source={images.okButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
+                            </View>
+                        </Modal>
+                    </View>)
+            : null}
+
+            {signoutModal? (
+                  <View style={{position: "absolute", width: "100%", height: "100%", backgroundColor: theme.whiteBackground, opacity: 0.3}}>
+                    <Modal visible={signoutModal} transparent={true}>
+                        <View style={{position: "absolute", top: getHeight(260), left: getWidth(40), width: getWidth(280), height: getHeight(120), borderRadius: 12, backgroundColor: theme.whiteBackground, borderStyle: "solid",
+                                      borderColor: theme.edgePink, borderWidth: 4, alignItems: "center", paddingTop: getHeight(13)}}>
+                            <CountText> 회원탈퇴하시겠습니까?</CountText>
+                            <TouchableOpacity onPress={() => setSignoutModal(pre => !pre)} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73), left: getWidth(40)}}><Image source={images.cancelButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
+                            <TouchableOpacity onPress={() => {
+                                    setSignoutModal(pre => !pre);
+                                    _onDelete();
+                            }} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73), right: getWidth(40)}}><Image source={images.okButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
+                        </View>
+                    </Modal>
+                  </View>)
+            : null}
+
+
+
             </View>
           </ScrollView>
         </ImageBackground>
