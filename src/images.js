@@ -47,6 +47,7 @@ import naverIcon from "./assets/images/mypage/naverIcon.png";
 import kakaoIcon from "./assets/images/mypage/kakaoIcon.png";
 import pencil from "./assets/images/mypage/pencil.png";
 import pencilRound from "./assets/images/mypage/pencilRound.png";
+import gps from "./assets/images/main/gps.png";
 
 export const images = {
     redCharacter,
@@ -98,4 +99,5 @@ export const images = {
     naverIcon,
     pencil,
     pencilRound,
+    gps,
 };

@@ -14,6 +14,11 @@ const BasicContext = createContext({
     setIsPublic: () => {},
     jwt: "",
     setJwt: () => {},
+    location: {
+        latitude: 0,
+        longitude: 0,
+    },
+    setLocation: () => {}
 });
 
 const BasicProvider = ({children}) => {
@@ -23,6 +28,10 @@ const BasicProvider = ({children}) => {
     const [nickName, setNickName] = useState("");
     const [isPublic, setIsPublic] = useState(false);
     const [jwt, setJwt] = useState("");
+    const [location, setLocation] = useState({
+        latitude: 0,
+        longitude: 0,
+    });
 
     const value = {
         loginSuccess, 
@@ -37,6 +46,8 @@ const BasicProvider = ({children}) => {
         setIsPublic,
         jwt,
         setJwt,
+        location,
+        setLocation,
     };
 
     // useEffect(()=> {

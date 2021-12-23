@@ -7,6 +7,7 @@ import * as KakaoLogin from "@react-native-seoul/kakao-login";
 import * as NaverLogin from "@react-native-seoul/naver-login";
 import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
 import {ProgressContext, BasicContext, UrlContext} from "../../contexts";
+import Geolocation from "@react-native-community/geolocation";
 
 const loginFont = getFontSize(50);
 
@@ -69,7 +70,7 @@ const LoginButton = styled.Image`
 `;
 
 const Login = ({navigation}) => {
-  const {setLoginSuccess, setJwt, setNickName, setUserInfo, setIsPublic, setProvier} = useContext(BasicContext);
+  const {setLoginSuccess, setJwt, setNickName, setUserInfo, setLocation ,setIsPublic, setProvier} = useContext(BasicContext);
   const {spinner} = useContext(ProgressContext);
   const {url} = useContext(UrlContext);
   
@@ -126,6 +127,24 @@ const Login = ({navigation}) => {
     }
 };
 
+// 위치 얻기 
+const geoLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+          const latitude = parseFloat(JSON.stringify(position.coords.latitude));
+          const longitude = parseFloat(JSON.stringify(position.coords.longitude));
+          let loc = {
+            latitude: latitude,
+            longitude: longitude,
+          };
+          setLocation(loc);
+          return loc;
+      },
+      error => { console.log(error.code, error.message); },
+      {enableHighAccuracy:true, timeout: 15000, maximumAge: 10000 },
+  )
+};
+
   // 서버로 소셜 accesstoken 보내서 jwt 받기 
   const FetchToken = async (tokenPrameter, provider) => {
     let fixedUrl = url+"/api/v1/auth/signin/"+provider+"?accessToken="+tokenPrameter;
@@ -151,11 +170,21 @@ const Login = ({navigation}) => {
             setJwt(jwtoken);
             // 이미 가입한 경우에는 바로 메인 탭으로, 새 회원인 경우에는 닉네임 설정으로 이동.
             let signed = await CheckSigned(jwtoken);
-            console.log(signed);
+            let loc = geoLocation();
+            console.log("loc 결과는?")
+            console.log(loc);
             if(signed==="not"){
-              setLoginSuccess(true);
+              if(loc===undefined){
+                setTimeout(() => {
+                  setLoginSuccess(true);
+                }, 2000)
+              }
             }else if(signed==="new"){
-              navigation.navigate("NickName");
+              if(loc===undefined){
+                setTimeout(() => {
+                  navigation.navigate("NickName");
+                }, 2000)
+              }
             }else{
               alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
             }
