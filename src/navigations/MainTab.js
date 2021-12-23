@@ -41,7 +41,8 @@ const MainTab = () => {
                                     source ={focused? require("../assets/icons/tab/homemap_active.png"):
                                     require("../assets/icons/tab/homemap.png")} 
                                     style={{width: IconWidth, height: IconHeight}}/> 
-                            )}
+                            )},
+                        unmountOnBlur: true,
                     }}
                 />
                 <Tab.Screen 
