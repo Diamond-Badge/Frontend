@@ -98,12 +98,85 @@ const Mypage = () => {
     const [signoutModal, setSignoutModal] = useState(false);
 
     useEffect(() => {
+      if(isFirst===true){
+        FetchInfo();
+      }
       if(isFirst===false){
         setIsPublic(publicDiary);
         FetchPublic();
         console.log(publicDiary)
       }
     }, [publicDiary]);
+
+    const DeleteAccount = async () => {
+      let fixedUrl = url+"/api/v1/user";
+
+      let option ={
+        method: 'delete',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type':'application/json',
+          'Autorization': jwt,
+        }
+      };
+    
+      try{
+        spinner.start();
+        let response = await fetch(fixedUrl, option);
+        let res = await response.json();
+        if(res.success){
+          alert("탈퇴되었습니다.");
+        }else{
+          alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
+        }
+      }catch(e)
+      {
+       console.log(e)
+      }finally{
+        spinner.stop();
+      }
+    };
+
+    // 통계 정보 불러오기
+    const FetchInfo = async () => {
+      let fixedUrl = url+"/api/v1/statistics";
+
+      let option ={
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type':'application/json',
+          'Autorization': jwt,
+        }
+      };
+    
+      try{
+        spinner.start();
+        let response = await fetch(fixedUrl, option);
+        let res = await response.json();
+        console.log(res);
+        if(res.success){
+          let data = res.data;
+          setAngryRate(data.angry);
+          setDepressedRate(data.depressed);
+          setExcitedRate(data.excited);
+          setSadRate(data.sad);
+          setHappyRate(data.happy);
+          setFirstLoc(data.first);
+          setSecondLoc(data.second);
+          setThirdLoc(data.third);
+          setDiaryCount(data.diaryCnt);
+          setLocCount(data.locationCnt);
+        }else{
+          alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
+        }
+      }catch(e)
+      {
+       console.log(e)
+      }finally{
+        spinner.stop();
+      }
+    };
 
     // 닉네임 변경 
     const FetchPublic = async () => {
@@ -202,6 +275,7 @@ const Mypage = () => {
 
     // 회원탈퇴
     const _onDelete = () => {
+      DeleteAccount();
       setLoginSuccess(false);
     };
  
@@ -382,7 +456,7 @@ const Mypage = () => {
               <InfoText top={465} left={51.5} size={20}>{activityMent()}</InfoText>
               <Image source={images.diaryIcon} style={{position: "absolute", top: getHeight(502), left: getWidth(73), height: getHeight(37), width: getWidth(37)}} resizeMode="contain"/>
               <InfoText top={512} left={120} size={20}>{diaryCount}개</InfoText>
-              <Image source={(diaryPrevCount < diaryCount)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(140), height: getHeight(23.9), width: getWidth(20)}}/>
+              <Image source={(diaryPrevCount < diaryCount)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(144), height: getHeight(23.9), width: getWidth(20)}}/>
               <Image source={images.locationIcon} style={{position: "absolute", top: getHeight(502), left: getWidth(204), height: getHeight(38.1), width: getWidth(36)}} resizeMode="contain"/>
               <InfoText top={512} left={250} size={20}>{locCount}개</InfoText>
               <Image source={(locPrevCount < locCount)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(274), height: getHeight(23.9), width: getWidth(20)}}/>
