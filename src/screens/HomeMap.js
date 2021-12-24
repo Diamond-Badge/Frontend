@@ -20,9 +20,12 @@ const CountText = styled.Text`
 
 const HomeMap = ({navigation, route}) => {
     const theme = useContext(ThemeContext);
-    const {location, setLocation} = useContext(BasicContext);
+    const {url} = useContext(UrlContext);
+    const {spinner} = useContext(ProgressContext);
+    const {location, setLocation, jwt} = useContext(BasicContext);
     const nowCoords = {latitude: location.latitude, longitude: location.longitude};
     const [isModal, setIsModal] = useState(false);
+    const [alertModal, setAlertModal] = useState(false);
     var isSubscribed = false;
 
     // 현위치 구하기 
@@ -59,7 +62,45 @@ const HomeMap = ({navigation, route}) => {
     }, []);
    
    
-   
+     // 위치 등록  
+     const UploadLocation = async (lat, long) => {
+        let fixedUrl = url+"/api/v1/diary";
+  
+        let coordsInfo = {
+            latitude: lat,
+            location: "",
+            longtitude: long
+        };
+
+        let option ={
+          method: 'post',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type':'application/json',
+            'Autorization': jwt,
+          },
+          body: JSON.stringify(coordsInfo),
+        };
+      
+        try{
+          spinner.start();
+          let response = await fetch(fixedUrl, option);
+          let res = await response.json();
+          console.log(fixedUrl);
+          console.log(option)
+          console.log(res);
+          if(res.success){
+            setAlertModal(true);
+          }else{
+            alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
+          }
+        }catch(e)
+        {
+         console.log(e)
+        }finally{
+          spinner.stop();
+        }
+      };
 
    // 마커 아이콘 
     const DiadyMarker = React.memo(({coord, count}) => {
@@ -120,7 +161,7 @@ const HomeMap = ({navigation, route}) => {
                 geoLocation();
                 setTimeout(() => {
                     navigation.reset({index: 0, routes: [{name: "HomeMap"}]})
-                }, 500);
+                }, 10);
             }
             }} 
             style={{width: getWidth(43), height: getHeight(43), position: "absolute", bottom: getHeight(15), left: getWidth(305)}}><Image source={images.gps} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
@@ -131,13 +172,25 @@ const HomeMap = ({navigation, route}) => {
                     <Modal visible={isModal} transparent={true}>
                             <View style={{position: "absolute", top: getHeight(260), left: getWidth(40), width: getWidth(280), height: getHeight(120), borderRadius: 12, backgroundColor: theme.whiteBackground, borderStyle: "solid",
                     borderColor: theme.edgePink, borderWidth: 4, alignItems: "center", paddingTop: getHeight(13)}}>
-                                <CountText> 현재 위치를 등록하시겠습니까?</CountText>
+                                <CountText>현재 위치를 등록하시겠습니까?</CountText>
                                 <CountText>현재 위치는 OOOO 입니다.</CountText>
                                 <TouchableOpacity onPress={() => setIsModal(pre => !pre)} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73), left: getWidth(40)}}><Image source={images.cancelButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
                                 <TouchableOpacity onPress={() => {
                                     setIsModal(pre => !pre);
-                                    alert(JSON.stringify(nowCoords));
+                                    UploadLocation(nowCoords.latitude, nowCoords.longitude);
                                     }} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73), right: getWidth(40)}}><Image source={images.okButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
+                            </View>
+                    </Modal>
+            </View>)
+        : null}
+
+        {alertModal? (
+            <View style={{position: "absolute", width: "100%", height: "100%", backgroundColor: theme.whiteBackground, opacity: 0.3}}>
+                    <Modal visible={alertModal} transparent={true}>
+                            <View style={{position: "absolute", top: getHeight(260), left: getWidth(40), width: getWidth(280), height: getHeight(120), borderRadius: 12, backgroundColor: theme.whiteBackground, borderStyle: "solid",
+                    borderColor: theme.edgePink, borderWidth: 4, alignItems: "center", paddingTop: getHeight(13)}}>
+                                <CountText>위치가 등록되었습니다.</CountText>
+                                <TouchableOpacity onPress={() => setAlertModal(pre => !pre)} style={{width: getWidth(90), height: getHeight(30), position: "absolute", top: getHeight(73)}}><Image source={images.okButton} style={{width: "100%", height: "100%"}}/></TouchableOpacity>
                             </View>
                     </Modal>
             </View>)
