@@ -6,7 +6,10 @@ const BasicContext = createContext({
     setLoginSuccess: () => {},
     provider: "",
     setProvier: () => {},
-    userInfo: {},
+    userInfo:  {
+        profileImage: null,
+        email: null,
+    },
     setUserInfo: () => {},
     nickName: "",
     setNickName: () => {},
@@ -24,7 +27,10 @@ const BasicContext = createContext({
 const BasicProvider = ({children}) => {
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [provider, setProvier] = useState("");
-    const [userInfo, setUserInfo] = useState({});
+    const [userInfo, setUserInfo] = useState({
+        profileImage: null,
+        email: null,
+      });
     const [nickName, setNickName] = useState("");
     const [isPublic, setIsPublic] = useState(false);
     const [jwt, setJwt] = useState("");

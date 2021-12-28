@@ -60,7 +60,7 @@ const CountText = styled.Text`
 
 
 
-const Mypage = () => {
+const Mypage = ({navigation}) => {
     const theme = useContext(ThemeContext);
     const {userInfo, nickName, isPublic, setIsPublic, provider, setLoginSuccess, jwt, setNickName, setUserInfo} = useContext(BasicContext);
     const {url} = useContext(UrlContext);
@@ -69,10 +69,9 @@ const Mypage = () => {
     const [nickModal, setNickModal] = useState(false);
     const [nick, setNick] = useState("");
     const [imageModal, setImageModal] = useState(false);
+    const [image, setImage] = useState(userInfo.profileImage);
 
-    useEffect(() => {
-      console.log(userInfo);
-    },[]);
+
 
     //감정 통계
     const [excitedRate, setExcitedRate] = useState(17);
@@ -87,10 +86,8 @@ const Mypage = () => {
     const [thirdLoc, setThirdLoc] = useState('장소이름 3');
 
     // 활발지수
-    const [diaryCount, setDiaryCount] = useState(5);
-    const [locCount, setLocCount] = useState(6);
-    const [diaryPrevCount, setDiaryPrevCount] = useState(3);
-    const [locPrevCount, setLocPrevCount] = useState(4);
+    const [diaryCount, setDiaryCount] = useState(0);
+    const [locCount, setLocCount] = useState(0);
     const [isFirst, setIsFirst] = useState(true);
 
     // 계정 설정 
@@ -106,6 +103,8 @@ const Mypage = () => {
         FetchPublic();
         console.log(publicDiary)
       }
+      console.log("지금의 이미지는?")
+      console.log(image);
     }, [publicDiary]);
 
     const DeleteAccount = async () => {
@@ -256,11 +255,9 @@ const Mypage = () => {
 
     // 활발 지수에 따른 멘트 (로직 리뷰 필요)
     const activityMent = () => {
-        if((diaryCount===diaryPrevCount)&&(locCount===locPrevCount)){
+        if((diaryCount>=0)&&(locCount>=0)){
           return nickName+"님은 저번 달만큼 활발하셨군요!";
-        }else if((diaryCount > diaryPrevCount)&&(locCount > locPrevCount)){
-          return nickName+"님은 저번 달에 비해 더 활발해지셨네요!";
-        }else if((diaryCount < diaryPrevCount)&&(locCount < locPrevCount)){
+        }else if((diaryCount < 0)&&(locCount < 0)){
           return nickName+"님은 저번 달에 비해 덜 활발해지셨네요!";
         }else{
           return nickName+"님은 저번 달과 비슷하게 활발하셨군요!";
@@ -279,6 +276,43 @@ const Mypage = () => {
       setLoginSuccess(false);
     };
  
+    // 이미지 등록 후 가져오기 
+    const getImage = async () => {
+      let fixedUrl = url+'/api/v1/user';
+
+      let option ={
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type':'application/json',
+          'Autorization': jwt,
+        }
+      };
+    
+      try{
+        spinner.start();
+        let response = await fetch(fixedUrl, option);
+        let res = await response.json();
+        if(res.success){
+          console.log("이미지 불러오기 성공")
+          let profileIm = res.data.profileImageUrl;
+          setImage(profileIm);
+          console.log(profileIm);
+          let prevEmail = userInfo.email;
+          setUserInfo({
+            email: prevEmail,
+            profileImageUrl: profileIm,
+          });
+        }else{
+          alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
+        }
+      }catch(e)
+      {
+       console.log(e)
+      }finally{
+        spinner.stop();
+      }
+    };
 
     // 이미지 등록 
     const uploadImage = async (path) => {
@@ -308,13 +342,11 @@ const Mypage = () => {
 
       try{
         spinner.start();
-        console.log(option);
-        console.log(fixedUrl);
         let response = await fetch(fixedUrl, option);
         let res = await response.json();
-        console.log(res);
         if(res.success){
-          console.log("성공!");
+          console.log("이미지 등록 성공")
+          await getImage();
         }else{
           alert("오류 발생하였습니다. 잠시 후 다시 이용해주세요.");
         }
@@ -324,21 +356,20 @@ const Mypage = () => {
       }finally{
         spinner.stop();
       }
-      
-      
-    
-
-
     };
 
     // 이미지 선택 - 카메라
     const getFromCamera = async () => {
       let result = await launchCamera({}, res => {
-        let path = res.assets[0].uri;
-        if(path!==""){
-          uploadImage(path);
+        if(res.didCancel){
+          return null;
         }else{
-          alert("잘못된 이미지입니다. 다시 선택해주세요."); //임시 에러 처리
+          let path = res.assets[0].uri;
+          if(path!==""){
+            uploadImage(path);
+          }else{
+            alert("잘못된 이미지입니다. 다시 선택해주세요."); //임시 에러 처리
+          }
         }
       });
     };
@@ -346,11 +377,15 @@ const Mypage = () => {
     // 이미지 선택 - 앨범
     const getFromGallery = async () => {
       let result = await launchImageLibrary({}, res => {
-        let path = res.assets[0].uri;
-        if(path!==""){
-          uploadImage(path);
+        if(res.didCancel){
+          return null;
         }else{
-          alert("잘못된 이미지입니다. 다시 선택해주세요."); //임시 에러 처리
+          let path = res.assets[0].uri;
+          if(path!==""){
+            uploadImage(path);
+          }else{
+            alert("잘못된 이미지입니다. 다시 선택해주세요."); //임시 에러 처리
+          }
         }
       });
     };
@@ -361,8 +396,8 @@ const Mypage = () => {
               <Image source={images.whiteBackground} style={{position: "absolute", top: getHeight(94), right: -2, width: "102%", height: "100%"}} resizeMode="stretch"/>
               {/*프로필 사진*/}
               <View style={{position: "absolute", top: getHeight(50), left: getWidth(132), justifyContent: 'center', alignItems: 'center'}}>
-                {userInfo.profileImage? 
-                (<Image source={""} style={{position: "relative",width: getHeight(96), height: getHeight(96), borderWidth: 4, borderColor: theme.darkPinkIcon, borderRadius: getHeight(96)/2}} resizeMode="cover"/>)  
+                {image? 
+                (<Image source={{uri: image}} style={{position: "relative",width: getHeight(96), height: getHeight(96), borderWidth: 4, borderColor: theme.darkPinkIcon, borderRadius: getHeight(96)/2}} resizeMode="cover"/>)  
               : (
                 <>
                 <Image source={images.profile} style={{position: "relative",width: getWidth(96), height: getHeight(96),}} resizeMode="contain"/>
@@ -456,10 +491,19 @@ const Mypage = () => {
               <InfoText top={465} left={51.5} size={20}>{activityMent()}</InfoText>
               <Image source={images.diaryIcon} style={{position: "absolute", top: getHeight(502), left: getWidth(73), height: getHeight(37), width: getWidth(37)}} resizeMode="contain"/>
               <InfoText top={512} left={120} size={20}>{diaryCount}개</InfoText>
-              <Image source={(diaryPrevCount < diaryCount)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(144), height: getHeight(23.9), width: getWidth(20)}}/>
+              {
+                (diaryCount != 0)? (
+                  <Image source={(diaryCount >0)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(144), height: getHeight(23.9), width: getWidth(20)}}/>
+                ) : null 
+              }
               <Image source={images.locationIcon} style={{position: "absolute", top: getHeight(502), left: getWidth(204), height: getHeight(38.1), width: getWidth(36)}} resizeMode="contain"/>
               <InfoText top={512} left={250} size={20}>{locCount}개</InfoText>
-              <Image source={(locPrevCount < locCount)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(274), height: getHeight(23.9), width: getWidth(20)}}/>
+              {
+                (locCount != 0)? (
+                  <Image source={(locCount >=0)? images.upMark : images.downMark} resizeMode="contain" style={{position: "absolute", top: getHeight(506.1), left: getWidth(274), height: getHeight(23.9), width: getWidth(20)}}/>
+                ): null
+              }
+
 
              {/*위치 통계*/}
               <InfoText top={580} left={40} size={20}>위치 통계</InfoText>
