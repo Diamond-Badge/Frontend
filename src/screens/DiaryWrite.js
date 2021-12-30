@@ -1,11 +1,11 @@
-import React, {useState, useMemo, useEffect, useRef, useLayoutEffect} from 'react';
+import React, {useState, useContext, useEffect, useRef} from 'react';
 import {ScrollView, StyleSheet, TextInput, View, Image, ImageBackground, Dimensions, TouchableOpacity} from 'react-native';
 import {  ImageButton, DiaryPhotoAdd } from '../components';
 import { theme } from '../theme';
 import styled from "styled-components/native";
 import {getFontSize, getWidth, getHeight} from "../hooks/caculateSize";
 import { images } from '../images';
-
+import {ProgressContext, BasicContext, UrlContext} from "../contexts";
 
 var moment = require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
@@ -28,12 +28,18 @@ const StyledImage = styled.Image`
 `;
 
 
-const DiaryWrite = ({navigation}) => {
+const DiaryWrite = ({navigation, route}) => {
+
+    const {jwt} = useContext(BasicContext);
+    const {spinner} = useContext(ProgressContext);
+    const {url} = useContext(UrlContext);
    
     const [date, setDate] = useState(moment());
 
     const [place, setPlace] = useState("00 대학교");
     const [time, setTime] = useState("11:04 AM");
+
+    const [diarySeq, setDiarySeq] = useState(route.params.diaryId);
 
     const [id, setId] = useState(0);
     const [photo, setPhoto] = useState();
@@ -61,7 +67,38 @@ const DiaryWrite = ({navigation}) => {
     }
 
     // 일기 저장
-    const _onSavePress = () => {}
+    const _onSavePress = async () => {
+        let fixedUrl = url+`/api/v1/diary/${diarySeq}?content=${content}&place=${place}`;
+      
+        let formData = new FormData();
+        photos.map( item => formData.append("files", {uri: item.uri}));
+
+        let options = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type':'application/json',
+                'Autorization': jwt,
+            },
+            body: formData,
+        };
+        try{
+          spinner.start();
+          let response = await fetch(fixedUrl, options);
+          let res = await response.json();
+          console.log(res);
+          if(res.success){
+            navigation.navigate("Diary");
+          }else{
+            navigation.navigate("Diary");
+            return "error";
+          }
+        }catch(e){
+          console.log(e);
+        }finally{
+          spinner.stop();
+        }
+    };
 
     // 사진 4장 받기
     const _photoAdd = () => {
@@ -75,7 +112,20 @@ const DiaryWrite = ({navigation}) => {
             <DiaryPhotoAdd disabled={false}  
                 photo={photo}
                 onChangeImage={photo => {setPhoto(photo); setPhotos([...photos, {key: id, uri: photo}]); setId(id+1);}}/>
-            {photos.map(item => <StyledImage key={item.key} source={{uri : item.uri}} />)}
+            {photos.map(item => 
+                <View>
+                    <StyledImage key={item.key} source={{uri : item.uri}}/>
+                    <View style={{flexDirection:'row'}}>
+                        {/* <ImageButton containerStyle={{top: getHeight(3.3)}} 
+                            imgStyle={{width: getWidth(14), height:getHeight(14)}} src={images.diaryedit}
+                            onPress={()=>{}} /> */}
+                        <ImageButton containerStyle={{top: getHeight(3.3), left: getWidth(185)}} 
+                            imgStyle={{width: getWidth(16), height:getHeight(16)}} src={images.diarydelete}
+                            onPress={()=>{setPhotos(photos.filter(photo => photo.key !== item.key));}} />
+                    </View>
+                    
+                </View>
+            )}
              </View>
             );
         }
@@ -131,12 +181,13 @@ const DiaryWrite = ({navigation}) => {
                     </View>
                     {/* 사진 추가 */}
                     <View style={{ marginLeft: getWidth(94) }}>
-                        {_photoAdd()}
                         <TextInput 
                             style={styles.input} 
                             multiline={true}
                             value={content}
                             onChangeText={text => setContent(text)}/>
+                        {_photoAdd()}
+                        
                     </View> 
                 </View> 
             </ScrollView>
