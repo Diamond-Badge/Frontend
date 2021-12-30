@@ -6,8 +6,10 @@ import EmotionRatio from './EmotionRatio';
 import LocationRank from './LocationRank';
 import MonthText from './MonthText';
 import MonthDrawing from './MonthDrawing';
+import DiaryPhotoAdd from './DiaryPhotoAdd';
+import AskEmotion from './AskEmotion';
 
 export { PinkButton, ImageButton, MonthCalendar, WeekCalendar, EmotionRatio, LocationRank
-, MonthText, MonthDrawing };
+, MonthText, MonthDrawing, DiaryPhotoAdd, AskEmotion };
 
 

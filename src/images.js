@@ -41,11 +41,12 @@ import diaryedit from './assets/images/diary/diaryedit.png';
 import placeadd from './assets/images/diary/placeadd.png';
 import check from './assets/images/check.png';
 import emotionbubble from './assets/images/diary/emotionbubble.png';
-import mapversion from './assets/images/mapversion.png'
 import emotionadd from './assets/images/diary/emotionadd.png';
 import NovText from "./assets/images/calendar/NovText.png";
 import JanText from "./assets/images/calendar/JanText.png";
 import JanDrawing from "./assets/images/calendar/JanDrawing.png";
+import diarydelete from './assets/images/diary/diarydelete.png';
+import diaryaddfirst from './assets/images/diary/diaryaddfirst.png';
 
 export const images = {
     redCharacter,
@@ -91,9 +92,10 @@ export const images = {
     placeadd,
     check,
     emotionbubble,
-    mapversion,
     emotionadd,
     NovText,
     JanDrawing,
     JanText,
+    diarydelete,
+    diaryaddfirst,
 };

@@ -11,7 +11,6 @@ const DiaryStack = ({navigation, route}) => {
     return (
         <Stack.Navigator>
             <Stack.Screen name= "Diary" component={Diary} options={{headerShown: false}} />
-            <Stack.Screen name= "DiaryFirst" component={DiaryFirst} options={{headerShown: false}}/>
             <Stack.Screen name= "DiaryWrite" component={DiaryWrite} options={{headerShown: false}}/>
         </Stack.Navigator>
     );
