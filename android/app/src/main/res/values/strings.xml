@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">발자꾹</string>
+    <string name="kakao_app_key">62b3992947e9c775e101c6944a83f6cb</string>
 </resources>

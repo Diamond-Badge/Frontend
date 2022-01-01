@@ -36,10 +36,17 @@ import calendarpic from './assets/images/calendar/calendarpic.png';
 import calendarcontent from './assets/images/calendar/calendarcontent.png';
 import mapversion from './assets/images/mapversion.png';
 import diaryborder from './assets/images/diary/diaryborder.png';
-import emotionadd from './assets/images/diary/emotionadd.png';
 import diaryicon from './assets/images/diary/diaryicon.png';
 import diaryedit from './assets/images/diary/diaryedit.png';
 import placeadd from './assets/images/diary/placeadd.png';
+import check from './assets/images/check.png';
+import emotionbubble from './assets/images/diary/emotionbubble.png';
+import emotionadd from './assets/images/diary/emotionadd.png';
+import NovText from "./assets/images/calendar/NovText.png";
+import JanText from "./assets/images/calendar/JanText.png";
+import JanDrawing from "./assets/images/calendar/JanDrawing.png";
+import diarydelete from './assets/images/diary/diarydelete.png';
+import diaryaddfirst from './assets/images/diary/diaryaddfirst.png';
 
 export const images = {
     redCharacter,
@@ -80,8 +87,15 @@ export const images = {
     calendarcontent,
     mapversion,
     diaryborder,
-    emotionadd,
     diaryedit,
     diaryicon,
     placeadd,
+    check,
+    emotionbubble,
+    emotionadd,
+    NovText,
+    JanDrawing,
+    JanText,
+    diarydelete,
+    diaryaddfirst,
 };

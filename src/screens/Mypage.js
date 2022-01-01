@@ -1,8 +1,9 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {Image, Dimensions, View, ImageBackground, ScrollView, Switch} from 'react-native';
 import styled, {ThemeContext} from "styled-components/native";
 import {images} from "../images";
 import {EmotionRatio, LocationRank} from "../components";
+import {BasicContext, ProgressContext} from "../contexts";
 
 const HEIGHT = Dimensions.get('screen').height;
 const WIDTH = Dimensions.get('screen').width;
@@ -49,9 +50,11 @@ color: ${({theme}) => theme.blackText};
 
 const Mypage = () => {
     const theme = useContext(ThemeContext);
+    const {userInfo, nickName, isPublic, setIsPublic} = useContext(BasicContext);
+    const {spinner} = useContext(ProgressContext);
     const [email, setEmail] = useState('아이디@gmail.com');
-    const [name, setName] = useState('닉네임');
-    const [isPublic, setIsPublic] = useState(false);
+    const [name, setName] = useState(nickName);
+    const [publicDiary, setPublicDiary] = useState(false);
     const [excitedRate, setExcitedRate] = useState(17);
     const [happyRate, setHappyRate] = useState(23);
     const [sadRate, setSadRate] = useState(31);
@@ -65,31 +68,42 @@ const Mypage = () => {
     const [diaryPrevCount, setDiaryPrevCount] = useState(3);
     const [locPrevCount, setLocPrevCount] = useState(4);
 
-  const activityMent = () => {
-    if((diaryCount===diaryPrevCount)&&(locCount===locPrevCount)){
-      return name+"님은 저번 달만큼 활발하셨군요!";
-    }else if((diaryCount > diaryPrevCount)&&(locCount > locPrevCount)){
-      return name+"님은 저번 달에 비해 더 활발해지셨네요!";
-    }else if((diaryCount < diaryPrevCount)&&(locCount < locPrevCount)){
-      return name+"님은 저번 달에 비해 덜 활발해지셨네요!";
-    }else{
-      return name+"님은 저번 달과 비슷하게 활발하셨군요!";
-    }
-  }
+    useEffect(() => {
+      setIsPublic(publicDiary);
+    }, [publicDiary]);
+
+    const activityMent = () => {
+        if((diaryCount===diaryPrevCount)&&(locCount===locPrevCount)){
+          return name+"님은 저번 달만큼 활발하셨군요!";
+        }else if((diaryCount > diaryPrevCount)&&(locCount > locPrevCount)){
+          return name+"님은 저번 달에 비해 더 활발해지셨네요!";
+        }else if((diaryCount < diaryPrevCount)&&(locCount < locPrevCount)){
+          return name+"님은 저번 달에 비해 덜 활발해지셨네요!";
+        }else{
+          return name+"님은 저번 달과 비슷하게 활발하셨군요!";
+        }
+      };
+
     return (
         <ImageBackground source={images.background} style={{width: "100%", height: "100%"}} resizeMode="cover">
           <ScrollView>
-              {/*프로필 사진*/}
               <Image source={images.whiteBackground} style={{position: "absolute", top: getHeight(94) ,width: "100%"}} resizeMode="stretch"/>
+              {/*프로필 사진*/}
               <View style={{position: "absolute", top: getHeight(50), left: getWidth(132), justifyContent: 'center', alignItems: 'center'}}>
+                {userInfo.profileImage? 
+                (<Image source={{uri: userInfo.profileImage}} style={{position: "relative",width: getHeight(96), height: getHeight(96), borderWidth: 4, borderColor: theme.darkPinkIcon, borderRadius: getHeight(96)/2}} resizeMode="cover"/>)  
+              : (
+                <>
                 <Image source={images.profile} style={{position: "relative",width: getWidth(96), height: getHeight(96),}} resizeMode="contain"/>
                 <Image source={images.mypageCharacter} style={{position: "absolute"}} resizeMode="stretch"/>
+                </>
+              )}
               </View>
 
               {/*이메일*/}
-              <View style={{position: "absolute", width: getWidth(138) ,top: getHeight(153), left: getWidth(111), justifyContent: 'center', alignItems: "center"}}>
+              <View style={{position: "absolute", width: "100%", top: getHeight(153), justifyContent: 'center', alignItems: "center"}}>
                   <View style={{flexDirection: "row", alignItems: "center"}}>
-                    <AccountText size={25}>{email}</AccountText>
+                    <AccountText size={25}>{userInfo.email}</AccountText>
                     <Image source={images.gooleIcon} style={{marginLeft: getWidth(5), width: getWidth(20), height: getHeight(20)}}/>
                   </View>
 
@@ -104,8 +118,8 @@ const Mypage = () => {
                     thumbColor={theme.toggleThumb}
                     toggleThumb
                     trackColor={{false: theme.toggleFalse, true: theme.toggleTrue}}
-                    value={isPublic}
-                    onValueChange={() => setIsPublic(prev => !prev)}
+                    value={publicDiary}
+                    onValueChange={() => setPublicDiary(prev => !prev)}
                     style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }]}}
                     />
                 </View>

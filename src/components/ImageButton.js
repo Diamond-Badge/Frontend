@@ -12,14 +12,14 @@ const ImageButton = ({containerStyle, onPress, isFilled, disabled, src, imgStyle
             onPress={onPress}
             isFilled={isFilled} 
             disabled={disabled}>
-            <Image source ={src} style={imgStyle}/>
+            <Image source ={src} style={imgStyle} resizeMode="stretch"/>
         </TouchableOpacity>
 
     );
 };
 
 const styles = StyleSheet.create({
-
+    
 });
 
 ImageButton.defaultProps ={
@@ -37,4 +37,4 @@ ImageButton.propTypes = {
 };
 
 
-export default ImageButton; 
+export default ImageButton;
