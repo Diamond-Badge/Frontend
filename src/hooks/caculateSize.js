@@ -18,3 +18,7 @@ export const getFontSize = sp => {
     return ((sp*HEIGHT)/760).toFixed(2);
 };
 
+export const removeWhitespace = text => {
+    const regex = /\s/g;
+    return text.replace(regex, "");
+};
