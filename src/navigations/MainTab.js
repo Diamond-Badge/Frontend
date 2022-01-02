@@ -4,8 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeMap, Diary, Calendar, Mypage } from '../screens'
 import { theme } from '../theme';
 import {getHeight, getWidth, getFontSize} from "../hooks/caculateSize"
-import DiaryStack from './DiaryStack';
 import MainStack from './MainStack';
+import DiaryStack from "./DiaryStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -42,7 +42,8 @@ const MainTab = () => {
                                     source ={focused? require("../assets/icons/tab/homemap_active.png"):
                                     require("../assets/icons/tab/homemap.png")} 
                                     style={{width: IconWidth, height: IconHeight}}/> 
-                            )}
+                            )},
+                        unmountOnBlur: true,
                     }}
                 />
                 <Tab.Screen 
