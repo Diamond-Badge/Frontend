@@ -53,7 +53,7 @@ const LikeText = styled.Text`
 `;
 
 
-const OthersList = ({ navigation: { goBack, navigate } }) => {
+const OthersList = ({ navigation: { navigate, reset } }) => {
     
     const _onPress =() => {
         navigate("OthersDiary");
@@ -62,7 +62,7 @@ const OthersList = ({ navigation: { goBack, navigate } }) => {
     return (
         <ImageBackground source={images.background} style={{width: "100%", height: "100%"}}>
                <DayText>2021년 11월 20일</DayText>
-               <TouchableOpacity onPress={() => goBack()}><Image source={images.back} style={{position: "absolute", top: getHeight(40), left: getWidth(20) ,height: getHeight(20), width: getWidth(20)}}/></TouchableOpacity>
+               <TouchableOpacity onPress={() => reset({index: 0, routes: [{name: "HomeMap"}]})}><Image source={images.back} style={{position: "absolute", top: getHeight(40), left: getWidth(20) ,height: getHeight(20), width: getWidth(20)}}/></TouchableOpacity>
                <ScrollView style={{marginTop: getHeight(110), paddingRight: getWidth(30)}}>
                    <TouchableOpacity onPress={_onPress} style={{left: getWidth(30), marginBottom: getHeight(14), width: getWidth(300), height: getHeight(110)}}>
                         <NicknameText>닉네임</NicknameText>

@@ -39,4 +39,5 @@ export const theme = {
     greybutton: color.grey,
     pinkbutton: color.ppink,
     diaryadd: color.pale,
+    calselect: color.lightPink,
 };
