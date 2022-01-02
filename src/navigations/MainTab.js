@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeMap, Diary, Calendar, Mypage } from '../screens'
 import { theme } from '../theme';
 import {getHeight, getWidth, getFontSize} from "../hooks/caculateSize"
-import DiaryStack from './DiaryStack';
 import MainStack from './MainStack';
 
 const Tab = createBottomTabNavigator();
@@ -42,12 +41,13 @@ const MainTab = () => {
                                     source ={focused? require("../assets/icons/tab/homemap_active.png"):
                                     require("../assets/icons/tab/homemap.png")} 
                                     style={{width: IconWidth, height: IconHeight}}/> 
-                            )}
+                            )},
+                        unmountOnBlur: true,
                     }}
                 />
                 <Tab.Screen 
                     name="일기" 
-                    component={DiaryStack}
+                    component={Diary}
                     options={{
                         tabBarLabelStyle: {fontSize: LabelSize, fontFamily: "나눔손글씨 중학생", 
                         position: "relative", bottom: getHeight(10)},
