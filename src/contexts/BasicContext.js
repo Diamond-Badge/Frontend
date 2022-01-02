@@ -6,7 +6,10 @@ const BasicContext = createContext({
     setLoginSuccess: () => {},
     provider: "",
     setProvier: () => {},
-    userInfo: {},
+    userInfo:  {
+        profileImage: null,
+        email: null,
+    },
     setUserInfo: () => {},
     nickName: "",
     setNickName: () => {},
@@ -14,15 +17,27 @@ const BasicContext = createContext({
     setIsPublic: () => {},
     jwt: "",
     setJwt: () => {},
+    location: {
+        latitude: 0,
+        longitude: 0,
+    },
+    setLocation: () => {}
 });
 
 const BasicProvider = ({children}) => {
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [provider, setProvier] = useState("");
-    const [userInfo, setUserInfo] = useState({});
+    const [userInfo, setUserInfo] = useState({
+        profileImage: null,
+        email: null,
+      });
     const [nickName, setNickName] = useState("");
     const [isPublic, setIsPublic] = useState(false);
     const [jwt, setJwt] = useState("");
+    const [location, setLocation] = useState({
+        latitude: 0,
+        longitude: 0,
+    });
 
     const value = {
         loginSuccess, 
@@ -37,6 +52,8 @@ const BasicProvider = ({children}) => {
         setIsPublic,
         jwt,
         setJwt,
+        location,
+        setLocation,
     };
 
     // useEffect(()=> {
