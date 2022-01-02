@@ -160,8 +160,7 @@ const Diary = ({navigation}) => {
 
     // 일기 쓰기 및 수정
     const _diaryChange = (id) => {
-        // navigation.navigate("DiaryWrite", {diaryId: id});
-        navigation.navigate("DiaryWrite");
+        navigation.navigate("DiaryWrite", {diaryId: id});
     };
 
     // 일기 삭제

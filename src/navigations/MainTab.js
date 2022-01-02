@@ -5,6 +5,7 @@ import { HomeMap, Diary, Calendar, Mypage } from '../screens'
 import { theme } from '../theme';
 import {getHeight, getWidth, getFontSize} from "../hooks/caculateSize"
 import MainStack from './MainStack';
+import DiaryStack from "./DiaryStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -47,7 +48,7 @@ const MainTab = () => {
                 />
                 <Tab.Screen 
                     name="일기" 
-                    component={Diary}
+                    component={DiaryStack}
                     options={{
                         tabBarLabelStyle: {fontSize: LabelSize, fontFamily: "나눔손글씨 중학생", 
                         position: "relative", bottom: getHeight(10)},
